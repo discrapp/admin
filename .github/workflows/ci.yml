@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-preview
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    # Don't block PR on Lighthouse failures (preview deploy may fail due to secrets)
+    # Don't block PR on Lighthouse failures (preview may not be accessible)
     continue-on-error: true
     permissions:
       pull-requests: write
