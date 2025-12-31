@@ -121,11 +121,18 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
       <SidebarHeader className="border-b px-6 py-4">
         <Link href="/" className="flex items-center">
           <Image
-            src="/images/icon.png"
+            src="/images/logo.webp"
             alt="Discr"
-            width={48}
-            height={48}
-            className="w-12 h-12"
+            width={128}
+            height={40}
+            className="h-10 w-auto dark:hidden"
+          />
+          <Image
+            src="/images/logo-white.webp"
+            alt="Discr"
+            width={128}
+            height={40}
+            className="h-10 w-auto hidden dark:block"
           />
         </Link>
       </SidebarHeader>
