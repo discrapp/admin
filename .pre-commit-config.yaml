@@ -28,6 +28,8 @@ repos:
     rev: v1.7.8
     hooks:
       - id: actionlint-docker
+        # Ignore false positive for lighthouse-ci-action outputs
+        args: ['-ignore', 'property "manifest" is not defined']
   - repo: https://github.com/bridgecrewio/checkov
     rev: 3.2.494
     hooks:
