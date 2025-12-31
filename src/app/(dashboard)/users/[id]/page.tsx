@@ -120,16 +120,16 @@ export default async function UserDetailPage({
       color,
       plastic,
       weight_grams,
-      created_at,
-      qr_codes (
-        short_code
-      )
+      created_at
     `
     )
     .eq('owner_id', id)
     .order('created_at', { ascending: false })
     .limit(10);
 
+  // Debug logging
+  console.log('Fetching discs for user:', id);
+  console.log('Discs result:', { data: discs, error: discsError });
   if (discsError) {
     console.error('Error fetching discs:', discsError);
   }
@@ -324,7 +324,6 @@ export default async function UserDetailPage({
                       <TableHead>Color</TableHead>
                       <TableHead>Plastic</TableHead>
                       <TableHead>Weight</TableHead>
-                      <TableHead>QR Code</TableHead>
                       <TableHead>Added</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -338,15 +337,6 @@ export default async function UserDetailPage({
                         <TableCell>{disc.plastic || '—'}</TableCell>
                         <TableCell>
                           {disc.weight_grams ? `${disc.weight_grams}g` : '—'}
-                        </TableCell>
-                        <TableCell>
-                          {disc.qr_codes ? (
-                            <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                              {(disc.qr_codes as unknown as { short_code: string }).short_code}
-                            </code>
-                          ) : (
-                            '—'
-                          )}
                         </TableCell>
                         <TableCell>{formatDate(disc.created_at)}</TableCell>
                       </TableRow>
