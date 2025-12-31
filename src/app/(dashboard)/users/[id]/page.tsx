@@ -110,7 +110,7 @@ export default async function UserDetailPage({
   }
 
   // Fetch user's discs
-  const { data: discs } = await supabase
+  const { data: discs, error: discsError } = await supabase
     .from('discs')
     .select(
       `
@@ -121,7 +121,7 @@ export default async function UserDetailPage({
       plastic,
       weight_grams,
       created_at,
-      qr_codes:qr_code_id (
+      qr_codes!qr_code_id (
         short_code
       )
     `
@@ -129,6 +129,10 @@ export default async function UserDetailPage({
     .eq('owner_id', id)
     .order('created_at', { ascending: false })
     .limit(10);
+
+  if (discsError) {
+    console.error('Error fetching discs:', discsError);
+  }
 
   // Fetch user's orders
   const { data: orders } = await supabase
