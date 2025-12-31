@@ -316,6 +316,11 @@ export default async function UserDetailPage({
               <CardTitle>Registered Discs</CardTitle>
             </CardHeader>
             <CardContent>
+              {discsError && (
+                <div className="mb-4 p-4 bg-red-500/10 border border-red-500 rounded text-red-500 text-sm">
+                  <strong>Debug Error:</strong> {discsError.message} (Code: {discsError.code})
+                </div>
+              )}
               {discs && discs.length > 0 ? (
                 <Table>
                   <TableHeader>
