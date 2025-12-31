@@ -18,12 +18,14 @@ interface DataPoint {
 interface AreaChartProps {
   data: DataPoint[];
   color?: string;
+  gradientId?: string;
   className?: string;
 }
 
 export function AreaChart({
   data,
-  color = 'hsl(var(--primary))',
+  color = '#8b5cf6',
+  gradientId = 'colorValue',
   className,
 }: AreaChartProps) {
   return (
@@ -31,38 +33,46 @@ export function AreaChart({
       <ResponsiveContainer width="100%" height={300}>
         <RechartsAreaChart data={data}>
           <defs>
-            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={color} stopOpacity={0.4} />
+              <stop offset="95%" stopColor={color} stopOpacity={0.05} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(255,255,255,0.1)"
+            vertical={false}
+          />
           <XAxis
             dataKey="date"
-            className="text-xs fill-muted-foreground"
+            tick={{ fill: '#888', fontSize: 12 }}
             tickLine={false}
             axisLine={false}
+            interval="preserveStartEnd"
           />
           <YAxis
-            className="text-xs fill-muted-foreground"
+            tick={{ fill: '#888', fontSize: 12 }}
             tickLine={false}
             axisLine={false}
             allowDecimals={false}
+            width={30}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'hsl(var(--popover))',
-              border: '1px solid hsl(var(--border))',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '6px',
-              color: 'hsl(var(--popover-foreground))',
+              color: '#fff',
             }}
+            labelStyle={{ color: '#888' }}
           />
           <Area
             type="monotone"
             dataKey="value"
             stroke={color}
+            strokeWidth={2}
             fillOpacity={1}
-            fill="url(#colorValue)"
+            fill={`url(#${gradientId})`}
           />
         </RechartsAreaChart>
       </ResponsiveContainer>

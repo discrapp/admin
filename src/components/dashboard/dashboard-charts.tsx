@@ -26,7 +26,11 @@ export function DashboardCharts({
           <CardTitle className="text-base">User Signups</CardTitle>
         </CardHeader>
         <CardContent>
-          <AreaChart data={signupsData} color="hsl(var(--chart-1))" />
+          <AreaChart
+            data={signupsData}
+            color="#22c55e"
+            gradientId="signupsGradient"
+          />
         </CardContent>
       </Card>
 
@@ -35,7 +39,11 @@ export function DashboardCharts({
           <CardTitle className="text-base">Orders</CardTitle>
         </CardHeader>
         <CardContent>
-          <AreaChart data={ordersData} color="hsl(var(--chart-2))" />
+          <AreaChart
+            data={ordersData}
+            color="#3b82f6"
+            gradientId="ordersGradient"
+          />
         </CardContent>
       </Card>
 
@@ -44,7 +52,11 @@ export function DashboardCharts({
           <CardTitle className="text-base">Recoveries</CardTitle>
         </CardHeader>
         <CardContent>
-          <AreaChart data={recoveriesData} color="hsl(var(--chart-3))" />
+          <AreaChart
+            data={recoveriesData}
+            color="#f59e0b"
+            gradientId="recoveriesGradient"
+          />
         </CardContent>
       </Card>
     </div>
