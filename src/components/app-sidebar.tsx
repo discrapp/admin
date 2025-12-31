@@ -125,14 +125,14 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
             alt="Discr"
             width={48}
             height={48}
-            className="dark:hidden"
+            className="w-12 h-12 dark:hidden"
           />
           <Image
             src="/images/logo-white.webp"
             alt="Discr"
             width={48}
             height={48}
-            className="hidden dark:block"
+            className="w-12 h-12 hidden dark:block"
           />
         </Link>
       </SidebarHeader>
