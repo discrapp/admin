@@ -49,9 +49,8 @@ jobs:
       - name: Build for Cloudflare
         run: npm run build:cloudflare
         env:
-          # Use secrets if available, fallback to placeholder for PR builds
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -163,8 +162,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-preview
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    # Don't block PR on Lighthouse failures (preview may not be accessible)
-    continue-on-error: true
     permissions:
       pull-requests: write
     steps:
@@ -198,7 +195,7 @@ jobs:
             };
 
             const body = [
-              '## ⚡ Lighthouse Report',
+              '## Lighthouse Report',
               '',
               '| Category | Score |',
               '|----------|-------|',
@@ -207,7 +204,7 @@ jobs:
               `| Best Practices | ${score(summary['best-practices'])} |`,
               `| SEO | ${score(summary.seo)} |`,
               '',
-              `[📊 Full Report](${Object.values(links)[0]})`,
+              `[Full Report](${Object.values(links)[0]})`,
               '',
               '<!-- lighthouse-report -->'
             ].join('\n');
