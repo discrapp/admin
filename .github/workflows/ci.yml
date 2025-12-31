@@ -106,7 +106,8 @@ jobs:
           # Extract the deployed URL
           PREVIEW_URL=$(grep -oP 'https://[^\s]+\.workers\.dev' deploy-output.txt | head -1)
           if [ -z "$PREVIEW_URL" ]; then
-            PREVIEW_URL="https://${WORKER_NAME}.${CLOUDFLARE_ACCOUNT_ID}.workers.dev"
+            # Fallback to standard workers.dev URL (no account ID in URL)
+            PREVIEW_URL="https://${WORKER_NAME}.workers.dev"
           fi
           echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
         env:
