@@ -8,8 +8,8 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  },
-  "routes": [
-    { "pattern": "admin.discrapp.com", "custom_domain": true }
-  ]
+  }
+  // Custom domain is configured manually in Cloudflare DNS
+  // to avoid DNS recreation on each deploy.
+  // Set up a CNAME: admin.discrapp.com -> discr-admin.<account>.workers.dev
 }
