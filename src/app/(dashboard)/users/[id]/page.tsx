@@ -120,6 +120,7 @@ export default async function UserDetailPage({
       color,
       plastic,
       weight,
+      qr_code_id,
       created_at
     `
     )
@@ -127,12 +128,6 @@ export default async function UserDetailPage({
     .order('created_at', { ascending: false })
     .limit(10);
 
-  // Debug logging
-  console.log('Fetching discs for user:', id);
-  console.log('Discs result:', { data: discs, error: discsError });
-  if (discsError) {
-    console.error('Error fetching discs:', discsError);
-  }
 
   // Fetch user's orders
   const { data: orders } = await supabase
@@ -316,11 +311,6 @@ export default async function UserDetailPage({
               <CardTitle>Registered Discs</CardTitle>
             </CardHeader>
             <CardContent>
-              {discsError && (
-                <div className="mb-4 p-4 bg-red-500/10 border border-red-500 rounded text-red-500 text-sm">
-                  <strong>Debug Error:</strong> {discsError.message} (Code: {discsError.code})
-                </div>
-              )}
               {discs && discs.length > 0 ? (
                 <Table>
                   <TableHeader>
@@ -329,6 +319,7 @@ export default async function UserDetailPage({
                       <TableHead>Color</TableHead>
                       <TableHead>Plastic</TableHead>
                       <TableHead>Weight</TableHead>
+                      <TableHead>QR</TableHead>
                       <TableHead>Added</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -342,6 +333,18 @@ export default async function UserDetailPage({
                         <TableCell>{disc.plastic || '—'}</TableCell>
                         <TableCell>
                           {disc.weight ? `${disc.weight}g` : '—'}
+                        </TableCell>
+                        <TableCell>
+                          {disc.qr_code_id ? (
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            >
+                              Yes
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">No</Badge>
+                          )}
                         </TableCell>
                         <TableCell>{formatDate(disc.created_at)}</TableCell>
                       </TableRow>
