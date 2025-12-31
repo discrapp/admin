@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -53,7 +54,22 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Discr Admin</CardTitle>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/images/logo.webp"
+              alt="Discr"
+              width={128}
+              height={128}
+              className="dark:hidden"
+            />
+            <Image
+              src="/images/logo-white.webp"
+              alt="Discr"
+              width={128}
+              height={128}
+              className="hidden dark:block"
+            />
+          </div>
           <CardDescription>Sign in to access the admin dashboard</CardDescription>
         </CardHeader>
         <CardContent>
