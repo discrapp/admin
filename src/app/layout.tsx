@@ -18,10 +18,7 @@ export const metadata: Metadata = {
   title: 'Discr Admin',
   description: 'Admin dashboard for Discr disc golf app',
   icons: {
-    icon: [
-      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon.png', sizes: '192x192', type: 'image/png' },
-    ],
+    icon: '/favicon.png',
     apple: '/icon.png',
   },
 };

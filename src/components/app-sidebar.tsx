@@ -119,7 +119,7 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-6 py-4">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center">
           <Image
             src="/images/logo.webp"
             alt="Discr"
@@ -134,7 +134,6 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
             height={32}
             className="hidden dark:block"
           />
-          <span className="font-semibold text-lg">Admin</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>
