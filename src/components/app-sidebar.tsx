@@ -123,15 +123,15 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
           <Image
             src="/images/logo.webp"
             alt="Discr"
-            width={32}
-            height={32}
+            width={48}
+            height={48}
             className="dark:hidden"
           />
           <Image
             src="/images/logo-white.webp"
             alt="Discr"
-            width={32}
-            height={32}
+            width={48}
+            height={48}
             className="hidden dark:block"
           />
         </Link>
