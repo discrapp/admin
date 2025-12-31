@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -53,6 +54,22 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/images/logo.webp"
+              alt="Discr"
+              width={64}
+              height={64}
+              className="dark:hidden"
+            />
+            <Image
+              src="/images/logo-white.webp"
+              alt="Discr"
+              width={64}
+              height={64}
+              className="hidden dark:block"
+            />
+          </div>
           <CardTitle className="text-2xl">Discr Admin</CardTitle>
           <CardDescription>Sign in to access the admin dashboard</CardDescription>
         </CardHeader>

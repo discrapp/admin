@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -119,8 +120,21 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
     <Sidebar>
       <SidebarHeader className="border-b px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <Disc className="h-6 w-6" />
-          <span className="font-semibold text-lg">Discr Admin</span>
+          <Image
+            src="/images/logo.webp"
+            alt="Discr"
+            width={32}
+            height={32}
+            className="dark:hidden"
+          />
+          <Image
+            src="/images/logo-white.webp"
+            alt="Discr"
+            width={32}
+            height={32}
+            className="hidden dark:block"
+          />
+          <span className="font-semibold text-lg">Admin</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>
