@@ -90,14 +90,11 @@ jobs:
       - name: Deploy Preview to Cloudflare
         id: deploy
         run: |
-          # Deploy as a separate worker for previews
+          # Deploy as a separate worker for previews using wrangler config
           WORKER_NAME="discr-admin-pr-${{ github.event.pull_request.number }}"
 
-          npx wrangler deploy .open-next/worker.js \
-            --name "$WORKER_NAME" \
-            --compatibility-date "2024-12-30" \
-            --compatibility-flags "nodejs_compat" \
-            --assets ".open-next/assets" \
+          # Use wrangler config but override name and skip custom domain
+          npx wrangler deploy --name "$WORKER_NAME" --no-bundle \
             > deploy-output.txt 2>&1 || true
 
           cat deploy-output.txt
