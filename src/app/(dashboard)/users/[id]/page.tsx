@@ -109,7 +109,7 @@ export default async function UserDetailPage({
     notFound();
   }
 
-  // Fetch user's discs
+  // Fetch user's discs (left join on qr_codes to include discs without QR codes)
   const { data: discs, error: discsError } = await supabase
     .from('discs')
     .select(
@@ -121,7 +121,7 @@ export default async function UserDetailPage({
       plastic,
       weight_grams,
       created_at,
-      qr_codes!qr_code_id (
+      qr_codes (
         short_code
       )
     `
