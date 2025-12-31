@@ -17,10 +17,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Discr Admin',
   description: 'Admin dashboard for Discr disc golf app',
-  icons: {
-    icon: '/favicon.png',
-    apple: '/icon.png',
-  },
 };
 
 export default function RootLayout({
