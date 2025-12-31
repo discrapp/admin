@@ -36,6 +36,7 @@
     "use-debounce": "^10.0.6"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.7",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
