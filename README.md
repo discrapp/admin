@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Discr Admin
 
-## Getting Started
+![GitHub branch status](https://img.shields.io/github/checks-status/discrapp/admin/main)
+![GitHub Issues](https://img.shields.io/github/issues/discrapp/admin)
+![GitHub last commit](https://img.shields.io/github/last-commit/discrapp/admin)
+![GitHub repo size](https://img.shields.io/github/repo-size/discrapp/admin)
+![GitHub License](https://img.shields.io/github/license/discrapp/admin)
 
-First, run the development server:
+## Introduction
+
+Admin dashboard for managing the Discr disc golf application. Built with
+Next.js and deployed on Cloudflare Pages.
+
+### Key Features
+
+- Order management for printer fulfillment
+- Role-based access control (admin/printer)
+- Real-time updates via Supabase Realtime
+- Business analytics and insights (planned)
+- User management (planned)
+- Content moderation (planned)
+
+## Prerequisites
+
+- Node.js 22+ and npm
+- Supabase project with admin credentials
+- Cloudflare account (for deployment)
+
+## Setup
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Copy the example environment file and fill in your Supabase credentials:
+
+```bash
+cp .env.example .env
+```
+
+Required environment variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+
+### Setting Up Admin Users
+
+To grant admin access to a user, update their `app_metadata` in Supabase:
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}'
+WHERE email = 'your-email@example.com';
+```
+
+For printer partners (orders-only access):
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "printer"}'
+WHERE email = 'printer@example.com';
+```
+
+## Development
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build for production:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run linting:
 
-## Learn More
+```bash
+npm run lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Cloudflare Preview
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run preview
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Deploy to Cloudflare Pages:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run deploy
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Or build and deploy separately:
+
+```bash
+npm run build:cloudflare
+npm run deploy:only
+```
+
+Set environment variables in Cloudflare Pages dashboard:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## Roles
+
+| Role | Access |
+|------|--------|
+| `admin` | Full access to all modules |
+| `printer` | Orders module only |
+
+## Project Structure
+
+```text
+admin/
+├── src/
+│   ├── app/
+│   │   ├── (dashboard)/       # Authenticated pages with sidebar
+│   │   │   ├── orders/        # Order management
+│   │   │   └── page.tsx       # Dashboard home
+│   │   ├── login/             # Login page
+│   │   └── unauthorized/      # Access denied page
+│   ├── components/
+│   │   ├── ui/                # shadcn/ui components
+│   │   └── app-sidebar.tsx    # Navigation sidebar
+│   └── lib/
+│       └── supabase/          # Supabase client setup
+├── wrangler.jsonc             # Cloudflare Workers config
+└── package.json
+```
+
+## Contributing
+
+Upon first clone, install the pre-commit hooks:
+
+```bash
+pre-commit install
+```
+
+To run pre-commit hooks locally:
+
+```bash
+pre-commit run --all-files
+```
+
+This project uses conventional commits for version management:
+
+```text
+feat: add new feature
+fix: resolve bug
+docs: update documentation
+chore: maintenance tasks
+```
+
+## License
+
+See LICENSE file for details.
