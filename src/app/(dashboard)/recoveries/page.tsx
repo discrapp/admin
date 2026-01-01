@@ -19,16 +19,9 @@ import {
   Users,
 } from 'lucide-react';
 import { RecoveryFilters } from './recovery-filters';
+import { Pagination } from '@/components/pagination';
 
 export const dynamic = 'force-dynamic';
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 function formatDateTime(date: string) {
   return new Date(date).toLocaleDateString('en-US', {
@@ -58,6 +51,7 @@ const statusIcons: Record<string, React.ReactNode> = {
 interface PageProps {
   searchParams: Promise<{
     status?: string;
+    page?: string;
   }>;
 }
 
@@ -65,10 +59,15 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const supabase = await createClient();
 
-  // Build query with filters
+  const page = parseInt(params.page || '1', 10);
+  const pageSize = 20;
+  const offset = (page - 1) * pageSize;
+
+  // Build query with filters and pagination
   let query = supabase
     .from('recovery_events')
-    .select(`
+    .select(
+      `
       id,
       status,
       finder_message,
@@ -86,43 +85,54 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
         full_name,
         email
       )
-    `)
-    .order('created_at', { ascending: false });
+    `,
+      { count: 'exact' }
+    )
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1);
 
   if (params.status) {
     query = query.eq('status', params.status);
   }
 
-  const { data: recoveries } = await query.limit(50);
+  const { data: recoveries, count } = await query;
 
-  // Get all recoveries for stats
+  // Get all recoveries for stats (only status needed)
   const { data: allRecoveries } = await supabase
     .from('recovery_events')
     .select('id, status, found_at, recovered_at');
 
   // Calculate metrics
   const totalRecoveries = allRecoveries?.length || 0;
-  const foundCount = allRecoveries?.filter((r) => r.status === 'found').length || 0;
-  const meetupProposedCount = allRecoveries?.filter((r) => r.status === 'meetup_proposed').length || 0;
-  const meetupConfirmedCount = allRecoveries?.filter((r) => r.status === 'meetup_confirmed').length || 0;
-  const recoveredCount = allRecoveries?.filter((r) => r.status === 'recovered').length || 0;
-  const cancelledCount = allRecoveries?.filter((r) => r.status === 'cancelled').length || 0;
+  const foundCount =
+    allRecoveries?.filter((r) => r.status === 'found').length || 0;
+  const meetupProposedCount =
+    allRecoveries?.filter((r) => r.status === 'meetup_proposed').length || 0;
+  const meetupConfirmedCount =
+    allRecoveries?.filter((r) => r.status === 'meetup_confirmed').length || 0;
+  const recoveredCount =
+    allRecoveries?.filter((r) => r.status === 'recovered').length || 0;
+  const cancelledCount =
+    allRecoveries?.filter((r) => r.status === 'cancelled').length || 0;
 
   // Success rate (recovered / total non-cancelled)
   const completedOrCancelled = recoveredCount + cancelledCount;
-  const successRate = completedOrCancelled > 0 ? recoveredCount / completedOrCancelled : 0;
+  const successRate =
+    completedOrCancelled > 0 ? recoveredCount / completedOrCancelled : 0;
 
   // Average time to recovery (for recovered events)
-  const recoveredEvents = allRecoveries?.filter(
-    (r) => r.status === 'recovered' && r.recovered_at && r.found_at
-  ) || [];
-  const avgRecoveryTimeHours = recoveredEvents.length > 0
-    ? recoveredEvents.reduce((sum, r) => {
-        const found = new Date(r.found_at).getTime();
-        const recovered = new Date(r.recovered_at!).getTime();
-        return sum + (recovered - found) / (1000 * 60 * 60);
-      }, 0) / recoveredEvents.length
-    : 0;
+  const recoveredEvents =
+    allRecoveries?.filter(
+      (r) => r.status === 'recovered' && r.recovered_at && r.found_at
+    ) || [];
+  const avgRecoveryTimeHours =
+    recoveredEvents.length > 0
+      ? recoveredEvents.reduce((sum, r) => {
+          const found = new Date(r.found_at).getTime();
+          const recovered = new Date(r.recovered_at!).getTime();
+          return sum + (recovered - found) / (1000 * 60 * 60);
+        }, 0) / recoveredEvents.length
+      : 0;
 
   // Active recoveries (not recovered or cancelled)
   const activeCount = foundCount + meetupProposedCount + meetupConfirmedCount;
@@ -130,9 +140,12 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
   // Stuck recoveries (found status for >7 days)
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const stuckCount = allRecoveries?.filter(
-    (r) => r.status === 'found' && new Date(r.found_at) < sevenDaysAgo
-  ).length || 0;
+  const stuckCount =
+    allRecoveries?.filter(
+      (r) => r.status === 'found' && new Date(r.found_at) < sevenDaysAgo
+    ).length || 0;
+
+  const totalPages = Math.ceil((count || 0) / pageSize);
 
   return (
     <div className="space-y-6">
@@ -147,7 +160,9 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Recoveries</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Recoveries
+            </CardTitle>
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -175,7 +190,9 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Recovery Time</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Avg Recovery Time
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -194,7 +211,9 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Stuck Recoveries</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Stuck Recoveries
+            </CardTitle>
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -232,7 +251,9 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
               <Users className="h-4 w-4 text-purple-500" />
               <span className="text-sm font-medium">Confirmed</span>
             </div>
-            <div className="text-2xl font-bold mt-2">{meetupConfirmedCount}</div>
+            <div className="text-2xl font-bold mt-2">
+              {meetupConfirmedCount}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -270,63 +291,74 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
             )}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {recoveries && recoveries.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Disc</TableHead>
-                  <TableHead>Finder</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Found</TableHead>
-                  <TableHead>Recovered</TableHead>
-                  <TableHead>Message</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recoveries.map((recovery) => {
-                  const disc = recovery.discs as unknown as {
-                    id: string;
-                    manufacturer: string;
-                    mold: string;
-                  } | null;
-                  const finder = recovery.finder as unknown as {
-                    id: string;
-                    full_name: string;
-                    email: string;
-                  } | null;
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Disc</TableHead>
+                    <TableHead>Finder</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Found</TableHead>
+                    <TableHead>Recovered</TableHead>
+                    <TableHead>Message</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recoveries.map((recovery) => {
+                    const disc = recovery.discs as unknown as {
+                      id: string;
+                      manufacturer: string;
+                      mold: string;
+                    } | null;
+                    const finder = recovery.finder as unknown as {
+                      id: string;
+                      full_name: string;
+                      email: string;
+                    } | null;
 
-                  return (
-                    <TableRow key={recovery.id}>
-                      <TableCell className="font-medium">
-                        {disc ? `${disc.manufacturer} ${disc.mold}` : 'Unknown'}
-                      </TableCell>
-                      <TableCell>
-                        {finder?.full_name || finder?.email || 'Unknown'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={`gap-1 ${statusColors[recovery.status] || ''}`}
-                        >
-                          {statusIcons[recovery.status]}
-                          {recovery.status.replace('_', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatDateTime(recovery.found_at)}</TableCell>
-                      <TableCell>
-                        {recovery.recovered_at
-                          ? formatDateTime(recovery.recovered_at)
-                          : '—'}
-                      </TableCell>
-                      <TableCell className="max-w-[200px] truncate">
-                        {recovery.finder_message || '—'}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                    return (
+                      <TableRow key={recovery.id}>
+                        <TableCell className="font-medium">
+                          {disc ? `${disc.manufacturer} ${disc.mold}` : 'Unknown'}
+                        </TableCell>
+                        <TableCell>
+                          {finder?.full_name || finder?.email || 'Unknown'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={`gap-1 ${statusColors[recovery.status] || ''}`}
+                          >
+                            {statusIcons[recovery.status]}
+                            {recovery.status.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{formatDateTime(recovery.found_at)}</TableCell>
+                        <TableCell>
+                          {recovery.recovered_at
+                            ? formatDateTime(recovery.recovered_at)
+                            : '—'}
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate">
+                          {recovery.finder_message || '—'}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalCount={count || 0}
+                itemsShown={recoveries.length}
+                itemName="recovery events"
+                basePath="/recoveries"
+              />
+            </>
           ) : (
             <p className="text-muted-foreground text-center py-8">
               No recovery events found
