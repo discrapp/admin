@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
@@ -18,15 +17,15 @@ const statusFlow = ['paid', 'processing', 'printed', 'shipped', 'delivered'];
 
 export function OrderStatusUpdater({
   orderId,
-  currentStatus,
+  currentStatus: initialStatus,
   trackingNumber: initialTrackingNumber,
 }: OrderStatusUpdaterProps) {
-  const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState<string | null>(null);
   const [trackingNumber, setTrackingNumber] = useState(initialTrackingNumber || '');
+  const [status, setStatus] = useState(initialStatus);
 
-  const currentIndex = statusFlow.indexOf(currentStatus);
+  const currentIndex = statusFlow.indexOf(status);
 
   const updateStatus = async (newStatus: string, additionalData?: Record<string, unknown>) => {
     setLoading(newStatus);
@@ -51,7 +50,7 @@ export function OrderStatusUpdater({
       if (error) throw error;
 
       toast.success(`Order status updated to ${newStatus}`);
-      router.refresh();
+      setStatus(newStatus);
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Failed to update order status');
@@ -63,19 +62,16 @@ export function OrderStatusUpdater({
   const handleMarkProcessing = () => updateStatus('processing');
   const handleMarkPrinted = () => updateStatus('printed');
   const handleMarkShipped = () => {
-    if (!trackingNumber.trim()) {
-      toast.error('Please enter a tracking number');
-      return;
-    }
-    updateStatus('shipped', { tracking_number: trackingNumber.trim() });
+    const trimmedTracking = trackingNumber.trim();
+    updateStatus('shipped', trimmedTracking ? { tracking_number: trimmedTracking } : {});
   };
   const handleMarkDelivered = () => updateStatus('delivered');
 
   // Can't update if cancelled or pending payment
-  if (currentStatus === 'cancelled' || currentStatus === 'pending_payment') {
+  if (status === 'cancelled' || status === 'pending_payment') {
     return (
       <p className="text-sm text-muted-foreground">
-        {currentStatus === 'cancelled'
+        {status === 'cancelled'
           ? 'This order has been cancelled.'
           : 'Waiting for payment to be completed.'}
       </p>
@@ -83,7 +79,7 @@ export function OrderStatusUpdater({
   }
 
   // Already delivered
-  if (currentStatus === 'delivered') {
+  if (status === 'delivered') {
     return (
       <p className="text-sm text-green-600 flex items-center gap-2">
         <CheckCircle className="h-4 w-4" />
@@ -95,7 +91,7 @@ export function OrderStatusUpdater({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        {currentStatus === 'paid' && (
+        {status === 'paid' && (
           <Button onClick={handleMarkProcessing} disabled={!!loading}>
             {loading === 'processing' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -106,7 +102,7 @@ export function OrderStatusUpdater({
           </Button>
         )}
 
-        {currentStatus === 'processing' && (
+        {status === 'processing' && (
           <Button onClick={handleMarkPrinted} disabled={!!loading}>
             {loading === 'printed' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -117,10 +113,10 @@ export function OrderStatusUpdater({
           </Button>
         )}
 
-        {currentStatus === 'printed' && (
+        {status === 'printed' && (
           <div className="flex flex-col sm:flex-row gap-2 w-full">
             <Input
-              placeholder="Enter tracking number"
+              placeholder="Tracking number (optional)"
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
               className="max-w-xs"
@@ -136,7 +132,7 @@ export function OrderStatusUpdater({
           </div>
         )}
 
-        {currentStatus === 'shipped' && (
+        {status === 'shipped' && (
           <Button onClick={handleMarkDelivered} disabled={!!loading}>
             {loading === 'delivered' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
