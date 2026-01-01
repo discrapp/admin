@@ -1,0 +1,66 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "America/Denver",
+  "schedule": ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageAction": "update",
+  "commitMessageExtra": "to {{newValue}}",
+  "commitMessageTopic": "{{depName}}",
+  "automerge": false,
+  "platformAutomerge": false,
+  "rebaseWhen": "behind-base-branch",
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["@benniemosher"],
+  "vulnerabilityAlerts": {
+    "labels": ["security", "dependencies"],
+    "assignees": ["@benniemosher"]
+  },
+  "packageRules": [
+    {
+      "description": "Group React packages",
+      "groupName": "react packages",
+      "matchPackageNames": ["/^react/", "/^@types/react/"]
+    },
+    {
+      "description": "Group Next.js packages",
+      "groupName": "nextjs packages",
+      "matchPackageNames": ["/^next/", "/^eslint-config-next/"]
+    },
+    {
+      "description": "Group Supabase packages",
+      "groupName": "supabase packages",
+      "matchPackageNames": ["/^@supabase//"]
+    },
+    {
+      "description": "Group Radix UI packages",
+      "groupName": "radix-ui packages",
+      "matchPackageNames": ["/^@radix-ui//"]
+    },
+    {
+      "description": "Group testing packages",
+      "groupName": "testing packages",
+      "matchPackageNames": ["/vitest/", "/testing-library/"]
+    },
+    {
+      "description": "GitHub Actions - automerge patch/minor",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Pre-commit hooks - group updates",
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit hooks"
+    },
+    {
+      "description": "TypeScript and types - group together",
+      "groupName": "typescript and types",
+      "matchPackageNames": ["/^typescript/", "/^@types//"]
+    }
+  ]
+}
