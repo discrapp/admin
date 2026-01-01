@@ -125,16 +125,16 @@ export function OrdersTable({
   return (
     <div className="space-y-4">
       <div className="rounded-md border">
-        <Table>
+        <Table aria-label="Orders list">
           <TableHeader>
             <TableRow>
-              <TableHead>Order #</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead scope="col">Order #</TableHead>
+              <TableHead scope="col">Customer</TableHead>
+              <TableHead scope="col">Quantity</TableHead>
+              <TableHead scope="col">Total</TableHead>
+              <TableHead scope="col">Status</TableHead>
+              <TableHead scope="col">Date</TableHead>
+              <TableHead scope="col" className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -168,6 +168,7 @@ export function OrdersTable({
                     <Badge
                       variant="secondary"
                       className={statusColors[order.status] || ''}
+                      aria-label={`Status: ${statusLabels[order.status] || order.status}`}
                     >
                       {statusLabels[order.status] || order.status}
                     </Badge>
@@ -175,8 +176,11 @@ export function OrdersTable({
                   <TableCell>{formatDate(order.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/orders/${order.id}`}>
-                        <Eye className="h-4 w-4 mr-1" />
+                      <Link
+                        href={`/orders/${order.id}`}
+                        aria-label={`View order ${order.order_number}`}
+                      >
+                        <Eye className="h-4 w-4 mr-1" aria-hidden="true" />
                         View
                       </Link>
                     </Button>
@@ -189,8 +193,8 @@ export function OrdersTable({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+      <nav aria-label="Orders pagination" className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground" aria-live="polite">
           Showing {orders.length} of {totalCount} orders
         </p>
         <div className="flex items-center gap-2">
@@ -199,11 +203,12 @@ export function OrdersTable({
             size="sm"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1}
+            aria-label="Go to previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-sm" aria-current="page">
             Page {currentPage} of {totalPages || 1}
           </span>
           <Button
@@ -211,12 +216,13 @@ export function OrdersTable({
             size="sm"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
+            aria-label="Go to next page"
           >
             Next
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
-      </div>
+      </nav>
     </div>
   );
 }

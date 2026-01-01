@@ -65,27 +65,44 @@ export function OrderFilters({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
+    <div
+      className="flex flex-col sm:flex-row gap-4"
+      role="search"
+      aria-label="Filter orders"
+    >
       <div className="flex-1">
+        <label htmlFor="order-search" className="sr-only">
+          Search orders
+        </label>
         <Input
+          id="order-search"
           placeholder="Search by order number..."
           value={searchValue}
           onChange={handleSearchChange}
           className="max-w-sm"
+          aria-describedby="search-hint"
         />
+        <span id="search-hint" className="sr-only">
+          Type to search orders by order number
+        </span>
       </div>
-      <Select value={currentStatus} onValueChange={handleStatusChange}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filter by status" />
-        </SelectTrigger>
-        <SelectContent>
-          {statusOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div>
+        <label htmlFor="status-filter" className="sr-only">
+          Filter by status
+        </label>
+        <Select value={currentStatus} onValueChange={handleStatusChange}>
+          <SelectTrigger className="w-[180px]" id="status-filter">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            {statusOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }

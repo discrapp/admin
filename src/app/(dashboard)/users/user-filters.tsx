@@ -62,28 +62,48 @@ export function UserFilters({ currentSearch, currentSort }: UserFiltersProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
+    <div
+      className="flex flex-col sm:flex-row gap-4"
+      role="search"
+      aria-label="Filter and sort users"
+    >
       <div className="flex-1 relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <label htmlFor="user-search" className="sr-only">
+          Search users
+        </label>
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+          aria-hidden="true"
+        />
         <Input
+          id="user-search"
           placeholder="Search by email, name, or username..."
           value={searchValue}
           onChange={handleSearchChange}
           className="max-w-sm pl-9"
+          aria-describedby="user-search-hint"
         />
+        <span id="user-search-hint" className="sr-only">
+          Type to search users by email, name, or username
+        </span>
       </div>
-      <Select value={currentSort} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div>
+        <label htmlFor="user-sort" className="sr-only">
+          Sort users
+        </label>
+        <Select value={currentSort} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-[180px]" id="user-sort">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
