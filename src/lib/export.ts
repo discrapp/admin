@@ -11,7 +11,7 @@ interface ExportColumn {
 /**
  * Exports data to CSV format and triggers download
  */
-export function exportToCSV<T extends Record<string, unknown>>(
+export function exportToCSV<T extends object>(
   data: T[],
   columns: ExportColumn[],
   filename: string
@@ -27,7 +27,7 @@ export function exportToCSV<T extends Record<string, unknown>>(
   const rows = data.map((row) => {
     return columns
       .map((col) => {
-        const value = row[col.key];
+        const value = (row as Record<string, unknown>)[col.key];
         const formatted = col.format ? col.format(value) : String(value ?? '');
         // Escape quotes and wrap in quotes
         return `"${formatted.replace(/"/g, '""')}"`;
@@ -53,7 +53,7 @@ export function exportToCSV<T extends Record<string, unknown>>(
 /**
  * Exports data to a printable HTML table that opens in a new window for printing/PDF
  */
-export function exportToPDF<T extends Record<string, unknown>>(
+export function exportToPDF<T extends object>(
   data: T[],
   columns: ExportColumn[],
   title: string
@@ -71,7 +71,7 @@ export function exportToPDF<T extends Record<string, unknown>>(
     .map((row) => {
       const cells = columns
         .map((col) => {
-          const value = row[col.key];
+          const value = (row as Record<string, unknown>)[col.key];
           const formatted = col.format ? col.format(value) : String(value ?? '—');
           return `<td style="border: 1px solid #ddd; padding: 8px;">${formatted}</td>`;
         })
