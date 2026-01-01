@@ -61,8 +61,13 @@ export function OrderStatusUpdater({
 
   const handleMarkProcessing = () => updateStatus('processing');
   const handleMarkPrinted = () => updateStatus('printed');
+  const [savedTrackingNumber, setSavedTrackingNumber] = useState(initialTrackingNumber);
+
   const handleMarkShipped = () => {
     const trimmedTracking = trackingNumber.trim();
+    if (trimmedTracking) {
+      setSavedTrackingNumber(trimmedTracking);
+    }
     updateStatus('shipped', trimmedTracking ? { tracking_number: trimmedTracking } : {});
   };
   const handleMarkDelivered = () => updateStatus('delivered');
@@ -132,7 +137,7 @@ export function OrderStatusUpdater({
           </div>
         )}
 
-        {status === 'shipped' && (
+        {status === 'shipped' && savedTrackingNumber && (
           <Button onClick={handleMarkDelivered} disabled={!!loading}>
             {loading === 'delivered' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -141,6 +146,12 @@ export function OrderStatusUpdater({
             )}
             Mark as Delivered
           </Button>
+        )}
+
+        {status === 'shipped' && !savedTrackingNumber && (
+          <p className="text-sm text-muted-foreground">
+            Shipped without tracking. Delivery status cannot be tracked.
+          </p>
         )}
       </div>
 
