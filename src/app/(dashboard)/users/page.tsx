@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import { UsersTable } from './users-table';
 import { UserFilters } from './user-filters';
 
@@ -15,6 +16,9 @@ export default async function UsersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  // Server-side authorization check - admin only
+  await requireAdmin();
+
   const params = await searchParams;
   const supabase = await createClient();
 

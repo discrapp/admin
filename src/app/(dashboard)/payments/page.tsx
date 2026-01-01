@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -48,6 +49,9 @@ const statusColors: Record<string, string> = {
 };
 
 export default async function PaymentsPage() {
+  // Server-side authorization check - admin only
+  await requireAdmin();
+
   const supabase = await createClient();
 
   // Get all orders for stats

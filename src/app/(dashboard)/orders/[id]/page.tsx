@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdminOrPrinter } from '@/lib/auth';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,9 @@ function formatCurrency(cents: number) {
 }
 
 export default async function OrderDetailPage({ params }: OrderPageProps) {
+  // Server-side authorization check - admin or printer
+  await requireAdminOrPrinter();
+
   const { id } = await params;
   const supabase = await createClient();
 

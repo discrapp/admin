@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdminOrPrinter } from '@/lib/auth';
 import { OrdersTable } from './orders-table';
 import { OrderFilters } from './order-filters';
 
@@ -15,6 +16,9 @@ export default async function OrdersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  // Server-side authorization check - admin or printer
+  await requireAdminOrPrinter();
+
   const params = await searchParams;
   const supabase = await createClient();
 
