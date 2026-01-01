@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChevronLeft, ChevronRight, Eye, Disc, Package } from 'lucide-react';
+import { ExportButtons } from '@/components/export-buttons';
+import { exportToCSV, exportToPDF, formatters } from '@/lib/export';
 
 interface User {
   id: string;
@@ -70,8 +72,38 @@ export function UsersTable({
     router.push(`/users?${params.toString()}`);
   };
 
+  const exportColumns = [
+    { key: 'email', header: 'Email' },
+    { key: 'full_name', header: 'Name' },
+    { key: 'username', header: 'Username' },
+    { key: 'disc_count', header: 'Discs', format: formatters.number },
+    { key: 'order_count', header: 'Orders', format: formatters.number },
+    {
+      key: 'stripe_connect_account_id',
+      header: 'Stripe Connect',
+      format: formatters.boolean,
+    },
+    { key: 'push_token', header: 'Push Enabled', format: formatters.boolean },
+    { key: 'created_at', header: 'Joined', format: formatters.date },
+  ];
+
+  const handleExportCSV = () => {
+    exportToCSV(users, exportColumns, `users-${new Date().toISOString().split('T')[0]}`);
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF(users, exportColumns, 'Users Report');
+  };
+
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <ExportButtons
+          onExportCSV={handleExportCSV}
+          onExportPDF={handleExportPDF}
+          disabled={users.length === 0}
+        />
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
