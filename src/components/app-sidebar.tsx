@@ -117,9 +117,9 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
   });
 
   return (
-    <Sidebar>
+    <Sidebar aria-label="Main navigation">
       <SidebarHeader className="border-b px-6 py-4">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="Discr Admin Home">
           <Image
             src="/images/logo.webp"
             alt="Discr"
@@ -140,12 +140,16 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu role="navigation" aria-label="Dashboard navigation">
               {filteredNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.url}
+                    aria-current={pathname === item.url ? 'page' : undefined}
+                  >
                     <Link href={item.url}>
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-4 w-4" aria-hidden="true" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

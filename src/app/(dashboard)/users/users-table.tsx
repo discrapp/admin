@@ -73,16 +73,16 @@ export function UsersTable({
   return (
     <div className="space-y-4">
       <div className="rounded-md border">
-        <Table>
+        <Table aria-label="Users list">
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Username</TableHead>
-              <TableHead>Discs</TableHead>
-              <TableHead>Orders</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead scope="col">User</TableHead>
+              <TableHead scope="col">Username</TableHead>
+              <TableHead scope="col">Discs</TableHead>
+              <TableHead scope="col">Orders</TableHead>
+              <TableHead scope="col">Status</TableHead>
+              <TableHead scope="col">Joined</TableHead>
+              <TableHead scope="col" className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -124,14 +124,18 @@ export function UsersTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <Disc className="h-3 w-3 text-muted-foreground" />
-                      {user.disc_count}
+                      <Disc className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                      <span aria-label={`${user.disc_count} discs`}>
+                        {user.disc_count}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <Package className="h-3 w-3 text-muted-foreground" />
-                      {user.order_count}
+                      <Package className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                      <span aria-label={`${user.order_count} orders`}>
+                        {user.order_count}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -160,8 +164,11 @@ export function UsersTable({
                   <TableCell>{formatDate(user.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/users/${user.id}`}>
-                        <Eye className="h-4 w-4 mr-1" />
+                      <Link
+                        href={`/users/${user.id}`}
+                        aria-label={`View user ${user.full_name || user.email}`}
+                      >
+                        <Eye className="h-4 w-4 mr-1" aria-hidden="true" />
                         View
                       </Link>
                     </Button>
@@ -174,8 +181,8 @@ export function UsersTable({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+      <nav aria-label="Users pagination" className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground" aria-live="polite">
           Showing {users.length} of {totalCount} users
         </p>
         <div className="flex items-center gap-2">
@@ -184,11 +191,12 @@ export function UsersTable({
             size="sm"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1}
+            aria-label="Go to previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-sm" aria-current="page">
             Page {currentPage} of {totalPages || 1}
           </span>
           <Button
@@ -196,12 +204,13 @@ export function UsersTable({
             size="sm"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
+            aria-label="Go to next page"
           >
             Next
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
-      </div>
+      </nav>
     </div>
   );
 }
