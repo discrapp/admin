@@ -12,16 +12,9 @@ import {
 } from '@/components/ui/table';
 import { Disc, CheckCircle, Clock, XCircle, RefreshCw } from 'lucide-react';
 import { CatalogFilters } from './catalog-filters';
+import { Pagination } from '@/components/pagination';
 
 export const dynamic = 'force-dynamic';
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 function formatDateTime(date: string) {
   return new Date(date).toLocaleDateString('en-US', {
@@ -33,8 +26,10 @@ function formatDateTime(date: string) {
 }
 
 const statusColors: Record<string, string> = {
-  verified: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  user_submitted: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  verified:
+    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  user_submitted:
+    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
   rejected: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
 };
 
@@ -50,6 +45,7 @@ interface PageProps {
     status?: string;
     category?: string;
     manufacturer?: string;
+    page?: string;
   }>;
 }
 
@@ -57,12 +53,17 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const supabase = await createClient();
 
-  // Build query with filters
+  const page = parseInt(params.page || '1', 10);
+  const pageSize = 50;
+  const offset = (page - 1) * pageSize;
+
+  // Build query with filters and pagination
   let query = supabase
     .from('disc_catalog')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('manufacturer', { ascending: true })
-    .order('mold', { ascending: true });
+    .order('mold', { ascending: true })
+    .range(offset, offset + pageSize - 1);
 
   if (params.search) {
     query = query.or(
@@ -82,7 +83,7 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
     query = query.eq('manufacturer', params.manufacturer);
   }
 
-  const { data: discs } = await query.limit(100);
+  const { data: discs, count } = await query;
 
   // Get counts by status
   const { data: allDiscs } = await supabase
@@ -90,9 +91,12 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
     .select('status, category');
 
   const totalDiscs = allDiscs?.length || 0;
-  const verifiedCount = allDiscs?.filter((d) => d.status === 'verified').length || 0;
-  const pendingCount = allDiscs?.filter((d) => d.status === 'user_submitted').length || 0;
-  const rejectedCount = allDiscs?.filter((d) => d.status === 'rejected').length || 0;
+  const verifiedCount =
+    allDiscs?.filter((d) => d.status === 'verified').length || 0;
+  const pendingCount =
+    allDiscs?.filter((d) => d.status === 'user_submitted').length || 0;
+  const rejectedCount =
+    allDiscs?.filter((d) => d.status === 'rejected').length || 0;
 
   // Get unique manufacturers and categories for filters
   const { data: manufacturerData } = await supabase
@@ -100,14 +104,18 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
     .select('manufacturer')
     .order('manufacturer');
 
-  const manufacturers = [...new Set(manufacturerData?.map((d) => d.manufacturer) || [])];
+  const manufacturers = [
+    ...new Set(manufacturerData?.map((d) => d.manufacturer) || []),
+  ];
 
   const { data: categoryData } = await supabase
     .from('disc_catalog')
     .select('category')
     .not('category', 'is', null);
 
-  const categories = [...new Set(categoryData?.map((d) => d.category).filter(Boolean) || [])];
+  const categories = [
+    ...new Set(categoryData?.map((d) => d.category).filter(Boolean) || []),
+  ];
 
   // Get recent sync logs
   const { data: syncLogs } = await supabase
@@ -115,6 +123,8 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
     .select('*')
     .order('started_at', { ascending: false })
     .limit(10);
+
+  const totalPages = Math.ceil((count || 0) / pageSize);
 
   return (
     <div className="space-y-6">
@@ -149,7 +159,9 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Review
+            </CardTitle>
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -171,8 +183,12 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
       {/* Tabs */}
       <Tabs defaultValue="catalog" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="catalog">Catalog ({discs?.length || 0})</TabsTrigger>
-          <TabsTrigger value="sync">Sync History ({syncLogs?.length || 0})</TabsTrigger>
+          <TabsTrigger value="catalog">
+            Catalog ({count || 0} of {totalDiscs})
+          </TabsTrigger>
+          <TabsTrigger value="sync">
+            Sync History ({syncLogs?.length || 0})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="catalog" className="space-y-4">
@@ -191,67 +207,82 @@ export default async function DiscCatalogPage({ searchParams }: PageProps) {
             <CardHeader>
               <CardTitle>
                 Disc Catalog
-                {params.search || params.status || params.category || params.manufacturer ? (
+                {params.search ||
+                params.status ||
+                params.category ||
+                params.manufacturer ? (
                   <span className="text-sm font-normal text-muted-foreground ml-2">
                     (filtered)
                   </span>
                 ) : null}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               {discs && discs.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Manufacturer</TableHead>
-                      <TableHead>Mold</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Flight Numbers</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Source</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {discs.map((disc) => (
-                      <TableRow key={disc.id}>
-                        <TableCell className="font-medium">
-                          {disc.manufacturer}
-                        </TableCell>
-                        <TableCell>{disc.mold}</TableCell>
-                        <TableCell>
-                          {disc.category ? (
-                            <Badge variant="outline">{disc.category}</Badge>
-                          ) : (
-                            '—'
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {disc.speed !== null ? (
-                            <span className="font-mono text-sm">
-                              {disc.speed} / {disc.glide} / {disc.turn} / {disc.fade}
-                            </span>
-                          ) : (
-                            '—'
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className={`gap-1 ${statusColors[disc.status] || ''}`}
-                          >
-                            {statusIcons[disc.status]}
-                            {disc.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {disc.source || '—'}
-                          </span>
-                        </TableCell>
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Manufacturer</TableHead>
+                        <TableHead>Mold</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Flight Numbers</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Source</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {discs.map((disc) => (
+                        <TableRow key={disc.id}>
+                          <TableCell className="font-medium">
+                            {disc.manufacturer}
+                          </TableCell>
+                          <TableCell>{disc.mold}</TableCell>
+                          <TableCell>
+                            {disc.category ? (
+                              <Badge variant="outline">{disc.category}</Badge>
+                            ) : (
+                              '—'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {disc.speed !== null ? (
+                              <span className="font-mono text-sm">
+                                {disc.speed} / {disc.glide} / {disc.turn} /{' '}
+                                {disc.fade}
+                              </span>
+                            ) : (
+                              '—'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="secondary"
+                              className={`gap-1 ${statusColors[disc.status] || ''}`}
+                            >
+                              {statusIcons[disc.status]}
+                              {disc.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {disc.source || '—'}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    totalCount={count || 0}
+                    itemsShown={discs.length}
+                    itemName="discs"
+                    basePath="/catalog"
+                  />
+                </>
               ) : (
                 <p className="text-muted-foreground text-center py-8">
                   No discs found
