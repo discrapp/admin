@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,6 +38,9 @@ function formatConfidence(confidence: number | null) {
 }
 
 export default async function AIInsightsPage() {
+  // Server-side authorization check - admin only
+  await requireAdmin();
+
   const supabase = await createClient();
 
   // Fetch AI identification metrics

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -23,6 +24,9 @@ import {
 export const dynamic = 'force-dynamic';
 
 export default async function SystemPage() {
+  // Server-side authorization check - admin only
+  await requireAdmin();
+
   const supabase = await createClient();
 
   // Notification health - users with push tokens
