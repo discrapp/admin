@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/client';
 import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { ExportButtons } from '@/components/export-buttons';
+import { exportToCSV, exportToPDF, formatters } from '@/lib/export';
 
 interface Order {
   id: string;
@@ -122,8 +124,56 @@ export function OrdersTable({
     router.push(`/orders?${params.toString()}`);
   };
 
+  const exportColumns = [
+    { key: 'order_number', header: 'Order #' },
+    {
+      key: 'customer',
+      header: 'Customer',
+      format: (value: unknown, row?: Order) => {
+        const order = row || (value as Order);
+        return order?.profiles?.full_name || order?.profiles?.email || 'Unknown';
+      },
+    },
+    { key: 'quantity', header: 'Quantity' },
+    {
+      key: 'total_price_cents',
+      header: 'Total',
+      format: formatters.currency,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      format: (value: unknown) => statusLabels[value as string] || (value as string),
+    },
+    { key: 'created_at', header: 'Date', format: formatters.datetime },
+    { key: 'tracking_number', header: 'Tracking #' },
+  ];
+
+  const handleExportCSV = () => {
+    const exportData = orders.map((order) => ({
+      ...order,
+      customer: order.profiles?.full_name || order.profiles?.email || 'Unknown',
+    }));
+    exportToCSV(exportData, exportColumns, `orders-${new Date().toISOString().split('T')[0]}`);
+  };
+
+  const handleExportPDF = () => {
+    const exportData = orders.map((order) => ({
+      ...order,
+      customer: order.profiles?.full_name || order.profiles?.email || 'Unknown',
+    }));
+    exportToPDF(exportData, exportColumns, 'Orders Report');
+  };
+
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <ExportButtons
+          onExportCSV={handleExportCSV}
+          onExportPDF={handleExportPDF}
+          disabled={orders.length === 0}
+        />
+      </div>
       <div className="rounded-md border">
         <Table aria-label="Orders list">
           <TableHeader>
