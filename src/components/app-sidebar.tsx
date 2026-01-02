@@ -14,6 +14,7 @@ import {
   CreditCard,
   Activity,
   LogOut,
+  Lightbulb,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -72,6 +73,12 @@ const navItems: NavItem[] = [
     title: 'AI Insights',
     url: '/ai',
     icon: Brain,
+    adminOnly: true,
+  },
+  {
+    title: 'Recommendations',
+    url: '/recommendations',
+    icon: Lightbulb,
     adminOnly: true,
   },
   {
