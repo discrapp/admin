@@ -429,6 +429,27 @@ export async function requireAdminOrPrinter() {
 | Add auth check | Use `requireAdmin()` or `requireAdminOrPrinter()` at page top |
 | Change colors | `src/app/globals.css` (CSS variables) |
 
+### Unified Color System (consistent across mobile, web, admin)
+
+**Dark Mode Surfaces (Material Design elevation):**
+
+| Purpose | Hex | oklch | CSS Variable |
+|---------|-----|-------|--------------|
+| Background | `#121212` | `oklch(0.178 0 0)` | `--background` |
+| Card/Surface | `#1e1e1e` | `oklch(0.205 0 0)` | `--card` |
+| Elevated | `#252525` | `oklch(0.227 0 0)` | `--secondary`, `--accent` |
+| Border | `#2e2e2e` | `oklch(0.252 0 0)` | `--border` |
+
+**Usage in Components:**
+
+```typescript
+// Use Tailwind classes that reference CSS variables
+<div className="bg-background">         {/* #121212 in dark */}
+<div className="bg-card">               {/* #1e1e1e in dark */}
+<div className="bg-secondary">          {/* #252525 in dark */}
+<div className="border-border">         {/* #2e2e2e in dark */}
+```
+
 ### Adding a New Dashboard Page
 
 1. Create `src/app/(dashboard)/feature/page.tsx`:
