@@ -25,6 +25,7 @@ import {
   Package,
   MapPin,
   Eye,
+  Phone,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -209,7 +210,7 @@ export default async function UserDetailPage({
                 )}
               </div>
 
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   {user.email}
@@ -217,6 +218,25 @@ export default async function UserDetailPage({
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   Joined {formatDate(user.created_at)}
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  {user.phone_number ? (
+                    <span className="font-mono text-xs">
+                      {user.phone_number}
+                      {user.phone_discoverable && (
+                        <Badge
+                          variant="secondary"
+                          className="ml-2 bg-green-100 text-green-800
+                            dark:bg-green-900 dark:text-green-200"
+                        >
+                          Discoverable
+                        </Badge>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">No phone</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />

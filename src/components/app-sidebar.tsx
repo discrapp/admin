@@ -15,6 +15,7 @@ import {
   Activity,
   LogOut,
   Lightbulb,
+  Phone,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -67,6 +68,12 @@ const navItems: NavItem[] = [
     title: 'Recoveries',
     url: '/recoveries',
     icon: MapPin,
+    adminOnly: true,
+  },
+  {
+    title: 'Phone Lookups',
+    url: '/phone-lookups',
+    icon: Phone,
     adminOnly: true,
   },
   {

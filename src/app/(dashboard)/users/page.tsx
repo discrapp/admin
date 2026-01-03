@@ -41,7 +41,9 @@ export default async function UsersPage({
       created_at,
       stripe_customer_id,
       stripe_connect_account_id,
-      push_token
+      push_token,
+      phone_number,
+      phone_discoverable
     `,
       { count: 'exact' }
     )

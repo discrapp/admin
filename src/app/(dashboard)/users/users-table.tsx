@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChevronLeft, ChevronRight, Eye, Disc, Package } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Disc, Package, Phone } from 'lucide-react';
 import { ExportButtons } from '@/components/export-buttons';
 import { exportToCSV, exportToPDF, formatters } from '@/lib/export';
 
@@ -27,6 +27,8 @@ interface User {
   stripe_customer_id: string | null;
   stripe_connect_account_id: string | null;
   push_token: string | null;
+  phone_number: string | null;
+  phone_discoverable: boolean;
   disc_count: number;
   order_count: number;
 }
@@ -172,10 +174,21 @@ export function UsersTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
+                      {user.phone_discoverable && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-purple-100 text-purple-800
+                            dark:bg-purple-900 dark:text-purple-200"
+                        >
+                          <Phone className="h-3 w-3 mr-1" aria-hidden="true" />
+                          Discoverable
+                        </Badge>
+                      )}
                       {user.stripe_connect_account_id && (
                         <Badge
                           variant="secondary"
-                          className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          className="bg-green-100 text-green-800
+                            dark:bg-green-900 dark:text-green-200"
                         >
                           Stripe Connect
                         </Badge>
@@ -183,12 +196,15 @@ export function UsersTable({
                       {user.push_token && (
                         <Badge
                           variant="secondary"
-                          className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                          className="bg-blue-100 text-blue-800
+                            dark:bg-blue-900 dark:text-blue-200"
                         >
                           Push Enabled
                         </Badge>
                       )}
-                      {!user.stripe_connect_account_id && !user.push_token && (
+                      {!user.stripe_connect_account_id &&
+                        !user.push_token &&
+                        !user.phone_discoverable && (
                         <span className="text-muted-foreground/50">—</span>
                       )}
                     </div>
