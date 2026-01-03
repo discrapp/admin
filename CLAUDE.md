@@ -252,6 +252,255 @@ const channel = supabase
 - **Payments** - Stripe monitoring
 - **System** - Health and errors
 
+---
+
+## Implementation Patterns (For Claude)
+
+### Server Component with Data Fetching
+
+```typescript
+// src/app/(dashboard)/orders/page.tsx
+import { createClient } from '@/lib/supabase/server';
+import { requireAdminOrPrinter } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic'; // Always fresh data
+
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>;
+}) {
+  await requireAdminOrPrinter(); // Redirects if not authorized
+  const params = await searchParams;
+  const supabase = await createClient();
+
+  const { data: orders, count } = await supabase
+    .from('sticker_orders')
+    .select(`*, profiles:user_id (email, full_name)`, { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(0, 19);
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Orders</h1>
+      <OrdersTable orders={orders || []} totalCount={count || 0} />
+    </div>
+  );
+}
+```
+
+### Client Component with Realtime Updates
+
+```typescript
+// src/app/(dashboard)/orders/orders-table.tsx
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+
+export function OrdersTable({ orders, totalCount }) {
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('orders-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'sticker_orders' },
+        () => router.refresh()
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [supabase, router]);
+
+  return <Table>{/* ... */}</Table>;
+}
+```
+
+### Client Component with State Update
+
+```typescript
+// src/app/(dashboard)/orders/[id]/order-status-updater.tsx
+'use client';
+
+import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { toast } from 'sonner';
+
+export function OrderStatusUpdater({ orderId, currentStatus }) {
+  const supabase = createClient();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const updateStatus = async (newStatus: string) => {
+    setLoading(newStatus);
+    try {
+      const { error } = await supabase
+        .from('sticker_orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
+
+      if (error) throw error;
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (error) {
+      toast.error('Failed to update status');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  return <Button onClick={() => updateStatus('shipped')}>Mark Shipped</Button>;
+}
+```
+
+### UI Component Pattern (shadcn/ui with CVA)
+
+```typescript
+// src/components/ui/button.tsx
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        outline: "border bg-background hover:bg-accent",
+        ghost: "hover:bg-accent",
+        destructive: "bg-destructive text-white hover:bg-destructive/90",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 px-3",
+        lg: "h-10 px-6",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: { variant: "default", size: "default" },
+  }
+);
+
+export function Button({ className, variant, size, ...props }) {
+  return <button className={cn(buttonVariants({ variant, size, className }))} {...props} />;
+}
+```
+
+### Auth Utilities
+
+```typescript
+// src/lib/auth.ts
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+
+export type UserRole = 'admin' | 'printer';
+
+export async function getAuthenticatedUser() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const role = user.app_metadata?.role as UserRole;
+  if (role !== 'admin' && role !== 'printer') return null;
+  return { user: { id: user.id, email: user.email }, role };
+}
+
+export async function requireAdmin() {
+  const auth = await getAuthenticatedUser();
+  if (!auth || auth.role !== 'admin') redirect('/orders');
+  return auth;
+}
+
+export async function requireAdminOrPrinter() {
+  const auth = await getAuthenticatedUser();
+  if (!auth) redirect('/unauthorized');
+  return auth;
+}
+```
+
+### File Map - Where to Edit
+
+| Task | Files to Edit |
+|------|---------------|
+| Add new page | `src/app/(dashboard)/[feature]/page.tsx` + `loading.tsx` + `error.tsx` |
+| Add UI component | `src/components/ui/[name].tsx` |
+| Add sidebar nav | `src/components/app-sidebar.tsx` (navItems array) |
+| Add toast | `import { toast } from 'sonner'` → `toast.success('Message')` |
+| Add auth check | Use `requireAdmin()` or `requireAdminOrPrinter()` at page top |
+| Change colors | `src/app/globals.css` (CSS variables) |
+
+### Adding a New Dashboard Page
+
+1. Create `src/app/(dashboard)/feature/page.tsx`:
+
+```typescript
+import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+
+export default async function FeaturePage() {
+  await requireAdmin();
+  const supabase = await createClient();
+  const { data } = await supabase.from('table').select('*');
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Feature</h1>
+      {/* UI here */}
+    </div>
+  );
+}
+```
+
+2. Add loading state `src/app/(dashboard)/feature/loading.tsx`:
+
+```typescript
+import { Skeleton } from '@/components/ui/skeleton';
+export default function Loading() {
+  return <Skeleton className="h-96 w-full" />;
+}
+```
+
+3. Update sidebar in `src/components/app-sidebar.tsx`:
+
+```typescript
+const navItems = [
+  // ... existing
+  { title: 'Feature', url: '/feature', icon: IconName, adminOnly: true },
+];
+```
+
+### Database Query Patterns
+
+```typescript
+// SELECT with relations
+const { data } = await supabase
+  .from('sticker_orders')
+  .select(`*, profiles:user_id (email, full_name, username)`)
+  .eq('id', orderId)
+  .single();
+
+// Paginated list with count
+const { data, count } = await supabase
+  .from('sticker_orders')
+  .select('*', { count: 'exact' })
+  .order('created_at', { ascending: false })
+  .range(offset, offset + pageSize - 1);
+
+// Filtered query
+let query = supabase.from('sticker_orders').select('*', { count: 'exact' });
+if (status !== 'all') query = query.eq('status', status);
+if (search) query = query.ilike('order_number', `%${search}%`);
+const { data, count } = await query;
+
+// UPDATE
+const { error } = await supabase
+  .from('sticker_orders')
+  .update({ status: 'shipped', shipped_at: new Date().toISOString() })
+  .eq('id', orderId);
+```
+
 ## References
 
 - @README.md - Repository overview
