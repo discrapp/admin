@@ -4,7 +4,7 @@ import { OrderStatusUpdater } from './order-status-updater';
 
 // Mock Supabase client
 const mockUpdate = vi.fn();
-const mockEq = vi.fn(() => Promise.resolve({ error: null }));
+const mockEq = vi.fn<() => Promise<{ error: Error | null }>>(() => Promise.resolve({ error: null }));
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({

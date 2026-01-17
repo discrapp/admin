@@ -16,10 +16,10 @@ describe('export utilities', () => {
       mockAppendChild = vi.fn();
       mockRemoveChild = vi.fn();
 
-      global.URL.createObjectURL = mockCreateObjectURL;
-      global.URL.revokeObjectURL = mockRevokeObjectURL;
-      document.body.appendChild = mockAppendChild;
-      document.body.removeChild = mockRemoveChild;
+      global.URL.createObjectURL = mockCreateObjectURL as typeof URL.createObjectURL;
+      global.URL.revokeObjectURL = mockRevokeObjectURL as typeof URL.revokeObjectURL;
+      document.body.appendChild = mockAppendChild as typeof document.body.appendChild;
+      document.body.removeChild = mockRemoveChild as typeof document.body.removeChild;
 
       vi.spyOn(document, 'createElement').mockImplementation((tagName) => {
         if (tagName === 'a') {
