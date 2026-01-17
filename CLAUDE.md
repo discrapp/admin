@@ -168,6 +168,37 @@ pre-commit autoupdate           # Update hook versions
 
 ## Important Notes
 
+### TypeScript Type Checking - MANDATORY
+
+**CRITICAL:** All code MUST pass TypeScript strict mode checking. Before
+committing:
+
+```bash
+npx tsc --noEmit      # Must pass with no errors
+```
+
+**CI enforces this check** - PRs will fail if TypeScript errors are present.
+
+**Common type issues to avoid:**
+
+- Don't use `any` type - use proper types or `unknown` with type guards
+- Add explicit types to variables that TypeScript can't infer
+- When mocking in tests, ensure mock return types match expected types
+- Use type assertions (`as`) sparingly and only when you're certain of the type
+- For test mocks with varying return types, use union types in the mock generic
+
+**Example of properly typed test mock (Vitest):**
+
+```typescript
+// Bad - TypeScript infers { error: null } so Error won't work
+const mockFn = vi.fn(() => Promise.resolve({ error: null }));
+
+// Good - Explicit union type allows both
+const mockFn = vi.fn<() => Promise<{ error: Error | null }>>(
+  () => Promise.resolve({ error: null })
+);
+```
+
 ### Test-Driven Development (TDD) - MANDATORY
 
 **CRITICAL:** All new code MUST be developed using Test-Driven Development:
@@ -535,7 +566,7 @@ const { error } = await supabase
 
 ---
 
-**Last Updated:** 2025-12-30
+**Last Updated:** 2026-01-17
 
 This file should be updated whenever:
 

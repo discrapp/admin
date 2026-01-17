@@ -31,6 +31,9 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
   test:
     name: Test
     if: github.event_name == 'push' || github.event.action != 'closed'
