@@ -16,6 +16,7 @@ import {
   LogOut,
   Lightbulb,
   Phone,
+  Beaker,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -62,6 +63,12 @@ const navItems: NavItem[] = [
     title: 'Disc Catalog',
     url: '/catalog',
     icon: Disc,
+    adminOnly: true,
+  },
+  {
+    title: 'Plastic Types',
+    url: '/plastics',
+    icon: Beaker,
     adminOnly: true,
   },
   {
