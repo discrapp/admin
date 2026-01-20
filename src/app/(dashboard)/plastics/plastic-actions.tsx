@@ -25,28 +25,51 @@ export function PlasticActions({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const updateStatus = async (newStatus: 'approved' | 'official') => {
+  const approvePlastic = async () => {
     setLoading(true);
     try {
       const supabase = createClient();
 
-      const { error } = await supabase
-        .from('plastic_types')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', plasticId);
+      const { error } = await supabase.functions.invoke('approve-plastic-type', {
+        body: { plastic_id: plasticId, action: 'approve' },
+      });
 
       if (error) throw error;
 
-      toast.success(
-        newStatus === 'approved'
-          ? 'Plastic type approved! User will be notified.'
-          : 'Plastic type marked as official.'
-      );
-
+      toast.success('Plastic type approved!');
       router.refresh();
     } catch (error) {
-      console.error('Error updating plastic status:', error);
-      toast.error('Failed to update plastic status');
+      console.error('Error approving plastic:', error);
+      toast.error('Failed to approve plastic type');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectPlastic = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to reject this plastic type? This cannot be undone.'
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase.functions.invoke('approve-plastic-type', {
+        body: { plastic_id: plasticId, action: 'reject' },
+      });
+
+      if (error) throw error;
+
+      toast.success('Plastic type rejected');
+      router.refresh();
+    } catch (error) {
+      console.error('Error rejecting plastic:', error);
+      toast.error('Failed to reject plastic type');
     } finally {
       setLoading(false);
     }
@@ -114,7 +137,7 @@ export function PlasticActions({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => updateStatus('approved')}
+        onClick={approvePlastic}
         disabled={loading}
         className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
       >
@@ -130,7 +153,7 @@ export function PlasticActions({
       <Button
         variant="ghost"
         size="sm"
-        onClick={deletePlastic}
+        onClick={rejectPlastic}
         disabled={loading}
         className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
       >
