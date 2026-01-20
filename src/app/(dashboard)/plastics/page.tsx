@@ -157,59 +157,56 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
 
       {/* Stats Cards - Clickable to filter */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Link href="/plastics" className="block">
-          <Card className={`cursor-pointer transition-colors hover:bg-accent ${!params.status ? 'ring-2 ring-primary' : ''}`}>
+        <Link href="/plastics" className="block h-full">
+          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${!params.status ? 'ring-2 ring-primary' : ''}`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Plastics</CardTitle>
               <Beaker className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalPlastics}</div>
+              <p className="text-xs mt-1 invisible">Placeholder</p>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/plastics?status=official" className="block">
-          <Card className={`cursor-pointer transition-colors hover:bg-accent ${params.status === 'official' ? 'ring-2 ring-blue-500' : ''}`}>
+        <Link href="/plastics?status=official" className="block h-full">
+          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'official' ? 'ring-2 ring-blue-500' : ''}`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Official</CardTitle>
               <Shield className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{officialCount}</div>
+              <p className="text-xs mt-1 invisible">Placeholder</p>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/plastics?status=approved" className="block">
-          <Card className={`cursor-pointer transition-colors hover:bg-accent ${params.status === 'approved' ? 'ring-2 ring-green-500' : ''}`}>
+        <Link href="/plastics?status=approved" className="block h-full">
+          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'approved' ? 'ring-2 ring-green-500' : ''}`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Approved
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Approved</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{approvedCount}</div>
+              <p className="text-xs mt-1 invisible">Placeholder</p>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/plastics?status=pending" className="block">
-          <Card className={`cursor-pointer transition-colors hover:bg-accent ${params.status === 'pending' ? 'ring-2 ring-yellow-500' : ''} ${pendingCount > 0 ? 'border-yellow-500' : ''}`}>
+        <Link href="/plastics?status=pending" className="block h-full">
+          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'pending' ? 'ring-2 ring-yellow-500' : ''} ${pendingCount > 0 ? 'border-yellow-500' : ''}`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Pending Review
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
               <Clock className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{pendingCount}</div>
-              {pendingCount > 0 && (
-                <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                  Needs attention
-                </p>
-              )}
+              <p className={`text-xs mt-1 ${pendingCount > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'invisible'}`}>
+                {pendingCount > 0 ? 'Needs attention' : 'Placeholder'}
+              </p>
             </CardContent>
           </Card>
         </Link>
