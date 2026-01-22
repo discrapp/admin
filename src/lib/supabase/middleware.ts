@@ -44,6 +44,11 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Allow access to unauthorized page (to prevent redirect loops)
+  if (pathname === '/unauthorized') {
+    return supabaseResponse;
+  }
+
   // Require authentication for all other routes
   if (!user) {
     return NextResponse.redirect(new URL('/login', request.url));

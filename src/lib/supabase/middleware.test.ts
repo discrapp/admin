@@ -228,6 +228,53 @@ describe('updateSession middleware', () => {
     });
   });
 
+  describe('unauthorized page', () => {
+    it('allows access to unauthorized page without authentication', async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+
+      const request = createMockRequest('/unauthorized');
+      const response = await updateSession(request);
+
+      expect(response.status).toBe(200);
+    });
+
+    it('allows access to unauthorized page for users without valid role', async () => {
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'regular@test.com',
+            app_metadata: {},
+          },
+        },
+      });
+
+      const request = createMockRequest('/unauthorized');
+      const response = await updateSession(request);
+
+      // Should NOT redirect, preventing redirect loop
+      expect(response.status).toBe(200);
+    });
+
+    it('allows access to unauthorized page for users with invalid role', async () => {
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'user@test.com',
+            app_metadata: { role: 'viewer' },
+          },
+        },
+      });
+
+      const request = createMockRequest('/unauthorized');
+      const response = await updateSession(request);
+
+      // Should NOT redirect, preventing redirect loop
+      expect(response.status).toBe(200);
+    });
+  });
+
   describe('unauthorized access', () => {
     it('redirects users without role to unauthorized', async () => {
       mockGetUser.mockResolvedValue({
