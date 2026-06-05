@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.action != 'closed'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -51,11 +51,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.action != 'closed'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -86,11 +86,11 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -129,7 +129,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Comment preview URL on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.HEIMDALLR_TOKEN }}
           script: |
@@ -180,7 +180,7 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run Lighthouse
         id: lighthouse
@@ -194,7 +194,7 @@ jobs:
 
       - name: Format Lighthouse Score
         id: format
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const results = ${{ steps.lighthouse.outputs.manifest }};
@@ -227,7 +227,7 @@ jobs:
             core.setOutput('body', body);
 
       - name: Comment Lighthouse results
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.HEIMDALLR_TOKEN }}
           script: |
@@ -267,11 +267,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
