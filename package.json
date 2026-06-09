@@ -39,6 +39,11 @@
     "tailwind-merge": "^3.4.0",
     "use-debounce": "^10.0.6"
   },
+  "overrides": {
+    "@typescript-eslint/eslint-plugin": "^8.61.0",
+    "@typescript-eslint/parser": "^8.61.0",
+    "typescript-eslint": "^8.61.0"
+  },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.14.7",
     "esbuild": "^0.27.0",
