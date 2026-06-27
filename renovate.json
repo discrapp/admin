@@ -9,6 +9,11 @@
       "matchPackageNames": ["eslint", "/^@eslint//", "/^eslint-plugin-/", "/^@typescript-eslint//"]
     },
     {
+      "description": "Block ESLint v10 - eslint-plugin-react (via eslint-config-next) does not support it yet",
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "<10"
+    },
+    {
       "description": "Group React packages",
       "groupName": "react packages",
       "matchPackageNames": ["/^react/", "/^@types/react/"]
