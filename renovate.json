@@ -1,7 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>discrapp/.github"],
+  "constraintsFiltering": "strict",
   "packageRules": [
+    {
+      "description": "Group ESLint ecosystem - must upgrade together to avoid peer dep conflicts",
+      "groupName": "eslint packages",
+      "matchPackageNames": ["eslint", "/^@eslint//", "/^eslint-plugin-/", "/^@typescript-eslint//"]
+    },
     {
       "description": "Group React packages",
       "groupName": "react packages",
