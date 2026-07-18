@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Clock, Hash, Lightbulb, Target, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Lightbulb, Target, Clock, Users, Hash } from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,9 +62,7 @@ function formatProcessingTime(ms: number | null) {
   return ms > 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms}ms`;
 }
 
-function getTopRecommendation(
-  recommendations: RecommendationLog['recommendations']
-): string {
+function getTopRecommendation(recommendations: RecommendationLog['recommendations']): string {
   if (!recommendations || recommendations.length === 0) return '—';
   const top = recommendations.find((r) => r.priority === 1) || recommendations[0];
   return `${top.disc.manufacturer} ${top.disc.mold}`;
@@ -217,9 +215,7 @@ export default async function RecommendationsPage() {
                       <Badge variant="outline">{log.request_count}</Badge>
                     </TableCell>
                     <TableCell>{getTopRecommendation(log.recommendations)}</TableCell>
-                    <TableCell>
-                      {log.bag_analysis?.total_discs ?? '—'} discs
-                    </TableCell>
+                    <TableCell>{log.bag_analysis?.total_discs ?? '—'} discs</TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
@@ -241,9 +237,7 @@ export default async function RecommendationsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No recommendation requests yet
-            </p>
+            <p className="text-muted-foreground text-center py-8">No recommendation requests yet</p>
           )}
         </CardContent>
       </Card>

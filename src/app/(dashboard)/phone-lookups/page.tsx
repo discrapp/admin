@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Clock, Phone, Search, TrendingUp, Users, XCircle } from 'lucide-react';
+import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,16 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Phone,
-  Search,
-  CheckCircle,
-  XCircle,
-  Clock,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
-import { Pagination } from '@/components/pagination';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -93,12 +85,9 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
 
   // Calculate metrics
   const totalLookups = allLookups?.length || 0;
-  const matchedCount =
-    allLookups?.filter((l) => l.matched_user_id !== null).length || 0;
-  const discoverableCount =
-    allLookups?.filter((l) => l.was_discoverable === true).length || 0;
-  const notFoundCount =
-    allLookups?.filter((l) => l.matched_user_id === null).length || 0;
+  const matchedCount = allLookups?.filter((l) => l.matched_user_id !== null).length || 0;
+  const discoverableCount = allLookups?.filter((l) => l.was_discoverable === true).length || 0;
+  const notFoundCount = allLookups?.filter((l) => l.matched_user_id === null).length || 0;
 
   // Match rate
   const matchRate = totalLookups > 0 ? matchedCount / totalLookups : 0;
@@ -106,16 +95,14 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
   // Lookups today
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const lookupsToday =
-    allLookups?.filter((l) => new Date(l.created_at) >= today).length || 0;
+  const lookupsToday = allLookups?.filter((l) => new Date(l.created_at) >= today).length || 0;
 
   // Unique finders (calculate from paginated data)
   const { data: uniqueFinders } = await supabase
     .from('phone_lookup_logs')
     .select('finder_id')
     .limit(1000);
-  const uniqueFinderCount = new Set(uniqueFinders?.map((f) => f.finder_id))
-    .size;
+  const uniqueFinderCount = new Set(uniqueFinders?.map((f) => f.finder_id)).size;
 
   const totalPages = Math.ceil((count || 0) / pageSize);
 
@@ -137,9 +124,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalLookups}</div>
-            <p className="text-xs text-muted-foreground">
-              {lookupsToday} today
-            </p>
+            <p className="text-xs text-muted-foreground">{lookupsToday} today</p>
           </CardContent>
         </Card>
 
@@ -149,9 +134,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(matchRate * 100)}%
-            </div>
+            <div className="text-2xl font-bold">{Math.round(matchRate * 100)}%</div>
             <p className="text-xs text-muted-foreground">
               {matchedCount} matched, {notFoundCount} not found
             </p>
@@ -160,16 +143,12 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Discoverable Matches
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Discoverable Matches</CardTitle>
             <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{discoverableCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Users with phone lookup enabled
-            </p>
+            <p className="text-xs text-muted-foreground">Users with phone lookup enabled</p>
           </CardContent>
         </Card>
 
@@ -180,9 +159,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{uniqueFinderCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Users using phone lookup
-            </p>
+            <p className="text-xs text-muted-foreground">Users using phone lookup</p>
           </CardContent>
         </Card>
       </div>
@@ -204,9 +181,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
               <XCircle className="h-4 w-4 text-red-500" />
               <span className="text-sm font-medium">Found but Private</span>
             </div>
-            <div className="text-2xl font-bold mt-2">
-              {matchedCount - discoverableCount}
-            </div>
+            <div className="text-2xl font-bold mt-2">{matchedCount - discoverableCount}</div>
           </CardContent>
         </Card>
         <Card>
@@ -258,18 +233,14 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
                             ? formatPhone(lookup.normalized_phone)
                             : lookup.searched_phone}
                         </TableCell>
-                        <TableCell>
-                          {finder?.full_name || finder?.email || 'Unknown'}
-                        </TableCell>
+                        <TableCell>{finder?.full_name || finder?.email || 'Unknown'}</TableCell>
                         <TableCell>
                           {matchedUser ? (
                             <span className="text-green-600 dark:text-green-400">
                               {matchedUser.full_name || matchedUser.email}
                             </span>
                           ) : (
-                            <span className="text-muted-foreground">
-                              Not found
-                            </span>
+                            <span className="text-muted-foreground">Not found</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -304,9 +275,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell>
-                          {formatDateTime(lookup.created_at)}
-                        </TableCell>
+                        <TableCell>{formatDateTime(lookup.created_at)}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -323,9 +292,7 @@ export default async function PhoneLookupsPage({ searchParams }: PageProps) {
               />
             </>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No phone lookups yet
-            </p>
+            <p className="text-muted-foreground text-center py-8">No phone lookups yet</p>
           )}
         </CardContent>
       </Card>

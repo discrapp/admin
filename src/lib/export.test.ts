@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { exportToCSV, exportToPDF, formatters } from './export';
 
 describe('export utilities', () => {

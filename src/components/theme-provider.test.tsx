@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { ThemeProvider } from './theme-provider';
 
 describe('ThemeProvider', () => {
@@ -16,12 +16,7 @@ describe('ThemeProvider', () => {
 
   it('passes through props to NextThemesProvider', () => {
     const { container } = render(
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <span>Test</span>
       </ThemeProvider>
     );
@@ -36,7 +31,7 @@ describe('ThemeProvider', () => {
         <div>
           <h1>Title</h1>
           <p>Paragraph</p>
-          <button>Button</button>
+          <button type="button">Button</button>
         </div>
       </ThemeProvider>
     );

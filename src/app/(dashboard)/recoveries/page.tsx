@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, CheckCircle, Clock, MapPin, TrendingUp, Users, XCircle } from 'lucide-react';
+import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,17 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  MapPin,
-  CheckCircle,
-  Clock,
-  XCircle,
-  TrendingUp,
-  Calendar,
-  Users,
-} from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 import { RecoveryFilters } from './recovery-filters';
-import { Pagination } from '@/components/pagination';
 
 export const dynamic = 'force-dynamic';
 
@@ -108,27 +100,21 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
 
   // Calculate metrics
   const totalRecoveries = allRecoveries?.length || 0;
-  const foundCount =
-    allRecoveries?.filter((r) => r.status === 'found').length || 0;
+  const foundCount = allRecoveries?.filter((r) => r.status === 'found').length || 0;
   const meetupProposedCount =
     allRecoveries?.filter((r) => r.status === 'meetup_proposed').length || 0;
   const meetupConfirmedCount =
     allRecoveries?.filter((r) => r.status === 'meetup_confirmed').length || 0;
-  const recoveredCount =
-    allRecoveries?.filter((r) => r.status === 'recovered').length || 0;
-  const cancelledCount =
-    allRecoveries?.filter((r) => r.status === 'cancelled').length || 0;
+  const recoveredCount = allRecoveries?.filter((r) => r.status === 'recovered').length || 0;
+  const cancelledCount = allRecoveries?.filter((r) => r.status === 'cancelled').length || 0;
 
   // Success rate (recovered / total non-cancelled)
   const completedOrCancelled = recoveredCount + cancelledCount;
-  const successRate =
-    completedOrCancelled > 0 ? recoveredCount / completedOrCancelled : 0;
+  const successRate = completedOrCancelled > 0 ? recoveredCount / completedOrCancelled : 0;
 
   // Average time to recovery (for recovered events)
   const recoveredEvents =
-    allRecoveries?.filter(
-      (r) => r.status === 'recovered' && r.recovered_at && r.found_at
-    ) || [];
+    allRecoveries?.filter((r) => r.status === 'recovered' && r.recovered_at && r.found_at) || [];
   const avgRecoveryTimeHours =
     recoveredEvents.length > 0
       ? recoveredEvents.reduce((sum, r) => {
@@ -145,9 +131,8 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const stuckCount =
-    allRecoveries?.filter(
-      (r) => r.status === 'found' && new Date(r.found_at) < sevenDaysAgo
-    ).length || 0;
+    allRecoveries?.filter((r) => r.status === 'found' && new Date(r.found_at) < sevenDaysAgo)
+      .length || 0;
 
   const totalPages = Math.ceil((count || 0) / pageSize);
 
@@ -155,18 +140,14 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Recovery Events</h1>
-        <p className="text-muted-foreground">
-          Monitor disc recovery system and success rates
-        </p>
+        <p className="text-muted-foreground">Monitor disc recovery system and success rates</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Recoveries
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Recoveries</CardTitle>
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -183,9 +164,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(successRate * 100)}%
-            </div>
+            <div className="text-2xl font-bold">{Math.round(successRate * 100)}%</div>
             <p className="text-xs text-muted-foreground">
               {recoveredCount} recovered, {cancelledCount} cancelled
             </p>
@@ -194,9 +173,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg Recovery Time
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Avg Recovery Time</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -207,24 +184,18 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
                   : `${Math.round(avgRecoveryTimeHours / 24)}d`
                 : '—'}
             </div>
-            <p className="text-xs text-muted-foreground">
-              From found to recovered
-            </p>
+            <p className="text-xs text-muted-foreground">From found to recovered</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Stuck Recoveries
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Stuck Recoveries</CardTitle>
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stuckCount}</div>
-            <p className="text-xs text-muted-foreground">
-              No activity &gt;7 days
-            </p>
+            <p className="text-xs text-muted-foreground">No activity &gt;7 days</p>
           </CardContent>
         </Card>
       </div>
@@ -255,9 +226,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
               <Users className="h-4 w-4 text-purple-500" />
               <span className="text-sm font-medium">Confirmed</span>
             </div>
-            <div className="text-2xl font-bold mt-2">
-              {meetupConfirmedCount}
-            </div>
+            <div className="text-2xl font-bold mt-2">{meetupConfirmedCount}</div>
           </CardContent>
         </Card>
         <Card>
@@ -327,9 +296,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
                         <TableCell className="font-medium">
                           {disc ? `${disc.manufacturer} ${disc.mold}` : 'Unknown'}
                         </TableCell>
-                        <TableCell>
-                          {finder?.full_name || finder?.email || 'Unknown'}
-                        </TableCell>
+                        <TableCell>{finder?.full_name || finder?.email || 'Unknown'}</TableCell>
                         <TableCell>
                           <Badge
                             variant="secondary"
@@ -341,9 +308,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
                         </TableCell>
                         <TableCell>{formatDateTime(recovery.found_at)}</TableCell>
                         <TableCell>
-                          {recovery.recovered_at
-                            ? formatDateTime(recovery.recovered_at)
-                            : '—'}
+                          {recovery.recovered_at ? formatDateTime(recovery.recovered_at) : '—'}
                         </TableCell>
                         <TableCell className="max-w-[200px] truncate">
                           {recovery.finder_message || '—'}
@@ -364,9 +329,7 @@ export default async function RecoveriesPage({ searchParams }: PageProps) {
               />
             </>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No recovery events found
-            </p>
+            <p className="text-muted-foreground text-center py-8">No recovery events found</p>
           )}
         </CardContent>
       </Card>

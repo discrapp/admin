@@ -9,11 +9,5 @@ export default function AIInsightsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load AI insights"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load AI insights" />;
 }

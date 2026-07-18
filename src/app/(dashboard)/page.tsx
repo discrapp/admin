@@ -1,16 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
+import { Disc, DollarSign, MapPin, Package, TrendingUp, Users } from 'lucide-react';
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Package,
-  Users,
-  Disc,
-  MapPin,
-  DollarSign,
-  TrendingUp,
-} from 'lucide-react';
-import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
 import { AlertsPanel } from '@/components/dashboard/alerts-panel';
+import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { createClient } from '@/lib/supabase/server';
 
 // Helper to format dates for display
 function formatDate(date: Date): string {
@@ -112,10 +105,7 @@ export default async function DashboardPage() {
 
   // Calculate total revenue
   const totalRevenue =
-    revenueResult.data?.reduce(
-      (sum, order) => sum + (order.total_price_cents || 0),
-      0
-    ) ?? 0;
+    revenueResult.data?.reduce((sum, order) => sum + (order.total_price_cents || 0), 0) ?? 0;
 
   // Process time series data for charts
   const dateLabels = generateDateLabels(30);
@@ -124,7 +114,9 @@ export default async function DashboardPage() {
     records: { created_at: string }[] | null
   ): { date: string; value: number }[] => {
     const countsByDate: Record<string, number> = {};
-    dateLabels.forEach((label) => (countsByDate[label] = 0));
+    dateLabels.forEach((label) => {
+      countsByDate[label] = 0;
+    });
 
     records?.forEach((record) => {
       const date = formatDate(new Date(record.created_at));
@@ -207,9 +199,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome to the Discr Admin Dashboard
-        </p>
+        <p className="text-muted-foreground">Welcome to the Discr Admin Dashboard</p>
       </div>
 
       {/* Stats Cards */}

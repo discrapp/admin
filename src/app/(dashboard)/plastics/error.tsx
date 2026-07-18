@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -20,9 +20,7 @@ export default function PlasticsError({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Plastic Types</h1>
-        <p className="text-muted-foreground">
-          Manage plastic types for disc golf discs
-        </p>
+        <p className="text-muted-foreground">Manage plastic types for disc golf discs</p>
       </div>
 
       <Card className="border-red-200 dark:border-red-900">

@@ -2,8 +2,8 @@
 
 import {
   Area,
-  AreaChart as RechartsAreaChart,
   CartesianGrid,
+  AreaChart as RechartsAreaChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -38,11 +38,7 @@ export function AreaChart({
               <stop offset="95%" stopColor={color} stopOpacity={0.05} />
             </linearGradient>
           </defs>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.1)"
-            vertical={false}
-          />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
           <XAxis
             dataKey="date"
             tick={{ fill: '#888', fontSize: 12 }}

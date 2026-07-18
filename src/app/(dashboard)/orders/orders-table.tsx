@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { ExportButtons } from '@/components/export-buttons';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,12 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { createClient } from '@/lib/supabase/client';
-import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
-import { ExportButtons } from '@/components/export-buttons';
 import { exportToCSV, exportToPDF, formatters } from '@/lib/export';
+import { createClient } from '@/lib/supabase/client';
 
 interface Order {
   id: string;
@@ -86,12 +86,7 @@ function formatCurrency(cents: number) {
   }).format(cents / 100);
 }
 
-export function OrdersTable({
-  orders,
-  currentPage,
-  totalPages,
-  totalCount,
-}: OrdersTableProps) {
+export function OrdersTable({ orders, currentPage, totalPages, totalCount }: OrdersTableProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -184,7 +179,9 @@ export function OrdersTable({
               <TableHead scope="col">Total</TableHead>
               <TableHead scope="col">Status</TableHead>
               <TableHead scope="col">Date</TableHead>
-              <TableHead scope="col" className="text-right">Actions</TableHead>
+              <TableHead scope="col" className="text-right">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -197,19 +194,13 @@ export function OrdersTable({
             ) : (
               orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">
-                    {order.order_number}
-                  </TableCell>
+                  <TableCell className="font-medium">{order.order_number}</TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">
-                        {order.profiles?.full_name ||
-                          order.profiles?.username ||
-                          'Unknown'}
+                        {order.profiles?.full_name || order.profiles?.username || 'Unknown'}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {order.profiles?.email}
-                      </div>
+                      <div className="text-sm text-muted-foreground">{order.profiles?.email}</div>
                     </div>
                   </TableCell>
                   <TableCell>{order.quantity} stickers</TableCell>

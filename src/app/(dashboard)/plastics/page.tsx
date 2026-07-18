@@ -1,8 +1,8 @@
+import { Beaker, CheckCircle, Clock, Factory, Shield, User } from 'lucide-react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -11,17 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Beaker,
-  CheckCircle,
-  Clock,
-  Shield,
-  Factory,
-  User,
-} from 'lucide-react';
-import { PlasticFilters } from './plastic-filters';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 import { PlasticActions } from './plastic-actions';
-import { Pagination } from '@/components/pagination';
+import { PlasticFilters } from './plastic-filters';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,12 +28,9 @@ function formatDateTime(date: string) {
 }
 
 const statusColors: Record<string, string> = {
-  official:
-    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  approved:
-    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  pending:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  official: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  approved: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
 };
 
 const statusIcons: Record<string, React.ReactNode> = {
@@ -103,9 +93,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
     .range(offset, offset + pageSize - 1);
 
   if (params.search) {
-    query = query.or(
-      `manufacturer.ilike.%${params.search}%,plastic_name.ilike.%${params.search}%`
-    );
+    query = query.or(`manufacturer.ilike.%${params.search}%,plastic_name.ilike.%${params.search}%`);
   }
 
   if (params.status) {
@@ -122,17 +110,12 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
   };
 
   // Get counts by status
-  const { data: allPlastics } = await supabase
-    .from('plastic_types')
-    .select('status');
+  const { data: allPlastics } = await supabase.from('plastic_types').select('status');
 
   const totalPlastics = allPlastics?.length || 0;
-  const officialCount =
-    allPlastics?.filter((p) => p.status === 'official').length || 0;
-  const approvedCount =
-    allPlastics?.filter((p) => p.status === 'approved').length || 0;
-  const pendingCount =
-    allPlastics?.filter((p) => p.status === 'pending').length || 0;
+  const officialCount = allPlastics?.filter((p) => p.status === 'official').length || 0;
+  const approvedCount = allPlastics?.filter((p) => p.status === 'approved').length || 0;
+  const pendingCount = allPlastics?.filter((p) => p.status === 'pending').length || 0;
 
   // Get unique manufacturers for filters
   const { data: manufacturerData } = await supabase
@@ -140,9 +123,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
     .select('manufacturer')
     .order('manufacturer');
 
-  const manufacturers = [
-    ...new Set(manufacturerData?.map((p) => p.manufacturer) || []),
-  ];
+  const manufacturers = [...new Set(manufacturerData?.map((p) => p.manufacturer) || [])];
 
   const totalPages = Math.ceil((count || 0) / pageSize);
 
@@ -150,15 +131,15 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Plastic Types</h1>
-        <p className="text-muted-foreground">
-          Manage plastic types for disc golf discs
-        </p>
+        <p className="text-muted-foreground">Manage plastic types for disc golf discs</p>
       </div>
 
       {/* Stats Cards - Clickable to filter */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Link href="/plastics" className="block h-full">
-          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${!params.status ? 'ring-2 ring-primary' : ''}`}>
+          <Card
+            className={`h-full cursor-pointer transition-colors hover:bg-accent ${!params.status ? 'ring-2 ring-primary' : ''}`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Plastics</CardTitle>
               <Beaker className="h-4 w-4 text-muted-foreground" />
@@ -171,7 +152,9 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
         </Link>
 
         <Link href="/plastics?status=official" className="block h-full">
-          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'official' ? 'ring-2 ring-blue-500' : ''}`}>
+          <Card
+            className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'official' ? 'ring-2 ring-blue-500' : ''}`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Official</CardTitle>
               <Shield className="h-4 w-4 text-blue-500" />
@@ -184,7 +167,9 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
         </Link>
 
         <Link href="/plastics?status=approved" className="block h-full">
-          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'approved' ? 'ring-2 ring-green-500' : ''}`}>
+          <Card
+            className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'approved' ? 'ring-2 ring-green-500' : ''}`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Approved</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
@@ -197,14 +182,18 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
         </Link>
 
         <Link href="/plastics?status=pending" className="block h-full">
-          <Card className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'pending' ? 'ring-2 ring-yellow-500' : ''} ${pendingCount > 0 ? 'border-yellow-500' : ''}`}>
+          <Card
+            className={`h-full cursor-pointer transition-colors hover:bg-accent ${params.status === 'pending' ? 'ring-2 ring-yellow-500' : ''} ${pendingCount > 0 ? 'border-yellow-500' : ''}`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
               <Clock className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{pendingCount}</div>
-              <p className={`text-xs mt-1 ${pendingCount > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'invisible'}`}>
+              <p
+                className={`text-xs mt-1 ${pendingCount > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'invisible'}`}
+              >
                 {pendingCount > 0 ? 'Needs attention' : 'Placeholder'}
               </p>
             </CardContent>
@@ -226,9 +215,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
           <CardTitle>
             Plastic Types
             {params.search || params.status || params.manufacturer ? (
-              <span className="text-sm font-normal text-muted-foreground ml-2">
-                (filtered)
-              </span>
+              <span className="text-sm font-normal text-muted-foreground ml-2">(filtered)</span>
             ) : null}
           </CardTitle>
         </CardHeader>
@@ -251,9 +238,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
                     <TableRow
                       key={plastic.id}
                       className={
-                        plastic.status === 'pending'
-                          ? 'bg-yellow-50 dark:bg-yellow-900/10'
-                          : ''
+                        plastic.status === 'pending' ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''
                       }
                     >
                       <TableCell className="font-medium">
@@ -277,8 +262,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
                           <div className="flex items-center gap-2">
                             <User className="h-3 w-3 text-muted-foreground" />
                             <span className="text-sm">
-                              {plastic.submitter.full_name ||
-                                plastic.submitter.email}
+                              {plastic.submitter.full_name || plastic.submitter.email}
                             </span>
                           </div>
                         ) : (
@@ -289,10 +273,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
                         {formatDateTime(plastic.created_at)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <PlasticActions
-                          plasticId={plastic.id}
-                          currentStatus={plastic.status}
-                        />
+                        <PlasticActions plasticId={plastic.id} currentStatus={plastic.status} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -309,9 +290,7 @@ export default async function PlasticsPage({ searchParams }: PageProps) {
               />
             </>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No plastic types found
-            </p>
+            <p className="text-muted-foreground text-center py-8">No plastic types found</p>
           )}
         </CardContent>
       </Card>

@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/auth';
-import { UsersTable } from './users-table';
+import { createClient } from '@/lib/supabase/server';
 import { UserFilters } from './user-filters';
+import { UsersTable } from './users-table';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,11 +11,7 @@ interface SearchParams {
   sort?: string;
 }
 
-export default async function UsersPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function UsersPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   // Server-side authorization check - admin only
   await requireAdmin();
 
@@ -110,9 +106,7 @@ export default async function UsersPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Users</h1>
-        <p className="text-muted-foreground">
-          Manage user accounts and view user activity
-        </p>
+        <p className="text-muted-foreground">Manage user accounts and view user activity</p>
       </div>
 
       <UserFilters currentSearch={search} currentSort={sort} />

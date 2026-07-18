@@ -1,11 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdminOrPrinter } from '@/lib/auth';
-import { notFound } from 'next/navigation';
+import { ArrowLeft, Download, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Download, ExternalLink } from 'lucide-react';
+import { requireAdminOrPrinter } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 import { OrderStatusUpdater } from './order-status-updater';
 import { OrderTimeline } from './order-timeline';
 
@@ -108,14 +108,9 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Order {order.order_number}</h1>
-          <p className="text-muted-foreground">
-            Placed on {formatDate(order.created_at)}
-          </p>
+          <p className="text-muted-foreground">Placed on {formatDate(order.created_at)}</p>
         </div>
-        <Badge
-          variant="secondary"
-          className={`text-sm ${statusColors[order.status] || ''}`}
-        >
+        <Badge variant="secondary" className={`text-sm ${statusColors[order.status] || ''}`}>
           {statusLabels[order.status] || order.status}
         </Badge>
       </div>
@@ -130,9 +125,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
             <div>
               <span className="text-sm text-muted-foreground">Name: </span>
               <span className="font-medium">
-                {order.profiles?.full_name ||
-                  order.profiles?.username ||
-                  'Unknown'}
+                {order.profiles?.full_name || order.profiles?.username || 'Unknown'}
               </span>
             </div>
             <div>
@@ -176,15 +169,11 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Unit Price</span>
-              <span className="font-medium">
-                {formatCurrency(order.unit_price_cents)}
-              </span>
+              <span className="font-medium">{formatCurrency(order.unit_price_cents)}</span>
             </div>
             <div className="flex justify-between border-t pt-2">
               <span className="font-medium">Total</span>
-              <span className="font-bold">
-                {formatCurrency(order.total_price_cents)}
-              </span>
+              <span className="font-bold">{formatCurrency(order.total_price_cents)}</span>
             </div>
           </CardContent>
         </Card>

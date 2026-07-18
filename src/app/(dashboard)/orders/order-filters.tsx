@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -9,8 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCallback, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 
 const statusOptions = [
   { value: 'all', label: 'All Statuses' },
@@ -28,10 +28,7 @@ interface OrderFiltersProps {
   currentSearch: string;
 }
 
-export function OrderFilters({
-  currentStatus,
-  currentSearch,
-}: OrderFiltersProps) {
+export function OrderFilters({ currentStatus, currentSearch }: OrderFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(currentSearch);
@@ -65,11 +62,7 @@ export function OrderFilters({
   };
 
   return (
-    <div
-      className="flex flex-col sm:flex-row gap-4"
-      role="search"
-      aria-label="Filter orders"
-    >
+    <div className="flex flex-col sm:flex-row gap-4" role="search" aria-label="Filter orders">
       <div className="flex-1">
         <label htmlFor="order-search" className="sr-only">
           Search orders

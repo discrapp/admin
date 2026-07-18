@@ -9,11 +9,5 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load dashboard"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load dashboard" />;
 }

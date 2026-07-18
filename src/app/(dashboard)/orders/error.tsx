@@ -9,7 +9,5 @@ export default function OrdersError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay error={error} reset={reset} title="Failed to load orders" />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load orders" />;
 }

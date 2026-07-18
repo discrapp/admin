@@ -9,11 +9,5 @@ export default function PaymentsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load payment data"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load payment data" />;
 }

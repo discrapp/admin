@@ -1,6 +1,9 @@
 'use client';
 
+import { Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -9,9 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
 
 interface CatalogFiltersProps {
   manufacturers: string[];
@@ -56,8 +56,7 @@ export function CatalogFilters({
     router.push('/catalog');
   };
 
-  const hasFilters =
-    currentSearch || currentStatus || currentCategory || currentManufacturer;
+  const hasFilters = currentSearch || currentStatus || currentCategory || currentManufacturer;
 
   return (
     <div className="flex flex-wrap gap-4 items-end">

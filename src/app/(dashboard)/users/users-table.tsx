@@ -1,7 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight, Disc, Eye, Package, Phone } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ExportButtons } from '@/components/export-buttons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -10,11 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChevronLeft, ChevronRight, Eye, Disc, Package, Phone } from 'lucide-react';
-import { ExportButtons } from '@/components/export-buttons';
 import { exportToCSV, exportToPDF, formatters } from '@/lib/export';
 
 interface User {
@@ -60,12 +60,7 @@ function getInitials(name: string | null, email: string): string {
   return email.slice(0, 2).toUpperCase();
 }
 
-export function UsersTable({
-  users,
-  currentPage,
-  totalPages,
-  totalCount,
-}: UsersTableProps) {
+export function UsersTable({ users, currentPage, totalPages, totalCount }: UsersTableProps) {
   const router = useRouter();
 
   const handlePageChange = (newPage: number) => {
@@ -116,7 +111,9 @@ export function UsersTable({
               <TableHead scope="col">Orders</TableHead>
               <TableHead scope="col">Status</TableHead>
               <TableHead scope="col">Joined</TableHead>
-              <TableHead scope="col" className="text-right">Actions</TableHead>
+              <TableHead scope="col" className="text-right">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -138,20 +135,14 @@ export function UsersTable({
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">
-                          {user.full_name || 'No name'}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {user.email}
-                        </div>
+                        <div className="font-medium">{user.full_name || 'No name'}</div>
+                        <div className="text-sm text-muted-foreground">{user.email}</div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     {user.username ? (
-                      <span className="text-muted-foreground">
-                        @{user.username}
-                      </span>
+                      <span className="text-muted-foreground">@{user.username}</span>
                     ) : (
                       <span className="text-muted-foreground/50">—</span>
                     )}
@@ -159,17 +150,13 @@ export function UsersTable({
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <Disc className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
-                      <span aria-label={`${user.disc_count} discs`}>
-                        {user.disc_count}
-                      </span>
+                      <span aria-label={`${user.disc_count} discs`}>{user.disc_count}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <Package className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
-                      <span aria-label={`${user.order_count} orders`}>
-                        {user.order_count}
-                      </span>
+                      <span aria-label={`${user.order_count} orders`}>{user.order_count}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -205,8 +192,8 @@ export function UsersTable({
                       {!user.stripe_connect_account_id &&
                         !user.push_token &&
                         !user.phone_discoverable && (
-                        <span className="text-muted-foreground/50">—</span>
-                      )}
+                          <span className="text-muted-foreground/50">—</span>
+                        )}
                     </div>
                   </TableCell>
                   <TableCell>{formatDate(user.created_at)}</TableCell>

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { updateSession } from './middleware';
 
 // Capture cookies config for testing
@@ -25,9 +25,7 @@ vi.mock('@supabase/ssr', () => ({
 function createMockRequest(pathname: string, cookies: Record<string, string> = {}) {
   const url = new URL(`http://localhost:3000${pathname}`);
   const cookieStore = {
-    getAll: vi.fn(() =>
-      Object.entries(cookies).map(([name, value]) => ({ name, value }))
-    ),
+    getAll: vi.fn(() => Object.entries(cookies).map(([name, value]) => ({ name, value }))),
     set: vi.fn(),
   };
 
