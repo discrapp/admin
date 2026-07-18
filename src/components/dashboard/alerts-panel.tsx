@@ -1,9 +1,9 @@
 'use client';
 
 import { AlertTriangle, Clock, CreditCard, XCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Alert {
   id: string;
@@ -75,12 +75,8 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{alert.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {alert.description}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {alert.timestamp}
-                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{alert.description}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{alert.timestamp}</p>
                 </div>
               </div>
             );

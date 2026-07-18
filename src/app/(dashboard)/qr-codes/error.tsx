@@ -9,11 +9,5 @@ export default function QRCodesError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load QR code data"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load QR code data" />;
 }

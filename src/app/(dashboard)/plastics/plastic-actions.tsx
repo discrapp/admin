@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { CheckCircle, Loader2, MoreHorizontal, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,8 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CheckCircle, XCircle, MoreHorizontal, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 
 interface PlasticActionsProps {
@@ -18,10 +18,7 @@ interface PlasticActionsProps {
   currentStatus: string;
 }
 
-export function PlasticActions({
-  plasticId,
-  currentStatus,
-}: PlasticActionsProps) {
+export function PlasticActions({ plasticId, currentStatus }: PlasticActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -47,11 +44,7 @@ export function PlasticActions({
   };
 
   const rejectPlastic = async () => {
-    if (
-      !confirm(
-        'Are you sure you want to reject this plastic type? This cannot be undone.'
-      )
-    ) {
+    if (!confirm('Are you sure you want to reject this plastic type? This cannot be undone.')) {
       return;
     }
 
@@ -76,11 +69,7 @@ export function PlasticActions({
   };
 
   const deletePlastic = async () => {
-    if (
-      !confirm(
-        'Are you sure you want to delete this plastic type? This cannot be undone.'
-      )
-    ) {
+    if (!confirm('Are you sure you want to delete this plastic type? This cannot be undone.')) {
       return;
     }
 
@@ -88,10 +77,7 @@ export function PlasticActions({
     try {
       const supabase = createClient();
 
-      const { error } = await supabase
-        .from('plastic_types')
-        .delete()
-        .eq('id', plasticId);
+      const { error } = await supabase.from('plastic_types').delete().eq('id', plasticId);
 
       if (error) throw error;
 
@@ -119,10 +105,7 @@ export function PlasticActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={deletePlastic}
-            className="text-red-600 dark:text-red-400"
-          >
+          <DropdownMenuItem onClick={deletePlastic} className="text-red-600 dark:text-red-400">
             <XCircle className="h-4 w-4 mr-2" />
             Delete
           </DropdownMenuItem>

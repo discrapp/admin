@@ -9,7 +9,5 @@ export default function UsersError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay error={error} reset={reset} title="Failed to load users" />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load users" />;
 }

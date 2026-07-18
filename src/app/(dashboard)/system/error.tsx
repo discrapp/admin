@@ -9,11 +9,5 @@ export default function SystemError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load system health"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load system health" />;
 }

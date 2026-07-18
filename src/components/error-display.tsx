@@ -1,9 +1,9 @@
 'use client';
 
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface ErrorDisplayProps {
   error: Error & { digest?: string };
@@ -11,11 +11,7 @@ interface ErrorDisplayProps {
   title?: string;
 }
 
-export function ErrorDisplay({
-  error,
-  reset,
-  title = 'Something went wrong',
-}: ErrorDisplayProps) {
+export function ErrorDisplay({ error, reset, title = 'Something went wrong' }: ErrorDisplayProps) {
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Error:', error);
@@ -35,9 +31,7 @@ export function ErrorDisplay({
             {error.message || 'An unexpected error occurred. Please try again.'}
           </p>
           {error.digest && (
-            <p className="text-xs text-muted-foreground">
-              Error ID: {error.digest}
-            </p>
+            <p className="text-xs text-muted-foreground">Error ID: {error.digest}</p>
           )}
           <Button onClick={reset} variant="outline" className="gap-2">
             <RefreshCw className="h-4 w-4" />

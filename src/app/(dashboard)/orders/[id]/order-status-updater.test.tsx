@@ -1,10 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { OrderStatusUpdater } from './order-status-updater';
 
 // Mock Supabase client
 const mockUpdate = vi.fn();
-const mockEq = vi.fn<() => Promise<{ error: Error | null }>>(() => Promise.resolve({ error: null }));
+const mockEq = vi.fn<() => Promise<{ error: Error | null }>>(() =>
+  Promise.resolve({ error: null })
+);
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
@@ -35,24 +37,14 @@ describe('OrderStatusUpdater', () => {
 
   describe('rendering', () => {
     it('shows "Start Processing" button when status is paid', () => {
-      render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="paid"
-          trackingNumber={null}
-        />
-      );
+      render(<OrderStatusUpdater orderId="order-123" currentStatus="paid" trackingNumber={null} />);
 
       expect(screen.getByText('Start Processing')).toBeInTheDocument();
     });
 
     it('shows "Mark as Printed" button when status is processing', () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="processing"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="processing" trackingNumber={null} />
       );
 
       expect(screen.getByText('Mark as Printed')).toBeInTheDocument();
@@ -60,11 +52,7 @@ describe('OrderStatusUpdater', () => {
 
     it('shows tracking input and "Mark as Shipped" button when status is printed', () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="printed"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="printed" trackingNumber={null} />
       );
 
       expect(screen.getByPlaceholderText('Tracking number (optional)')).toBeInTheDocument();
@@ -73,11 +61,7 @@ describe('OrderStatusUpdater', () => {
 
     it('shows "Mark as Delivered" button when status is shipped with tracking', () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="shipped"
-          trackingNumber="TRACK123"
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="shipped" trackingNumber="TRACK123" />
       );
 
       expect(screen.getByText('Mark as Delivered')).toBeInTheDocument();
@@ -85,11 +69,7 @@ describe('OrderStatusUpdater', () => {
 
     it('shows message about no tracking when shipped without tracking number', () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="shipped"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="shipped" trackingNumber={null} />
       );
 
       expect(
@@ -112,11 +92,7 @@ describe('OrderStatusUpdater', () => {
 
     it('shows cancelled message when status is cancelled', () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="cancelled"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="cancelled" trackingNumber={null} />
       );
 
       expect(screen.getByText('This order has been cancelled.')).toBeInTheDocument();
@@ -136,11 +112,7 @@ describe('OrderStatusUpdater', () => {
 
     it('displays status progress indicator', () => {
       const { container } = render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="processing"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="processing" trackingNumber={null} />
       );
 
       // Should have 5 status dots (paid, processing, printed, shipped, delivered)
@@ -151,20 +123,12 @@ describe('OrderStatusUpdater', () => {
 
   describe('status updates', () => {
     it('updates status to processing when "Start Processing" is clicked', async () => {
-      render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="paid"
-          trackingNumber={null}
-        />
-      );
+      render(<OrderStatusUpdater orderId="order-123" currentStatus="paid" trackingNumber={null} />);
 
       fireEvent.click(screen.getByText('Start Processing'));
 
       await waitFor(() => {
-        expect(mockUpdate).toHaveBeenCalledWith(
-          expect.objectContaining({ status: 'processing' })
-        );
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ status: 'processing' }));
       });
 
       expect(toast.success).toHaveBeenCalledWith('Order status updated to processing');
@@ -172,11 +136,7 @@ describe('OrderStatusUpdater', () => {
 
     it('updates status to printed with timestamp when "Mark as Printed" is clicked', async () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="processing"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="processing" trackingNumber={null} />
       );
 
       fireEvent.click(screen.getByText('Mark as Printed'));
@@ -195,11 +155,7 @@ describe('OrderStatusUpdater', () => {
 
     it('updates status to shipped with tracking number and timestamp', async () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="printed"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="printed" trackingNumber={null} />
       );
 
       const input = screen.getByPlaceholderText('Tracking number (optional)');
@@ -221,11 +177,7 @@ describe('OrderStatusUpdater', () => {
 
     it('updates status to shipped without tracking number', async () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="printed"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="printed" trackingNumber={null} />
       );
 
       fireEvent.click(screen.getByText('Mark as Shipped'));
@@ -246,19 +198,13 @@ describe('OrderStatusUpdater', () => {
 
     it('updates status to delivered when "Mark as Delivered" is clicked', async () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="shipped"
-          trackingNumber="TRACK123"
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="shipped" trackingNumber="TRACK123" />
       );
 
       fireEvent.click(screen.getByText('Mark as Delivered'));
 
       await waitFor(() => {
-        expect(mockUpdate).toHaveBeenCalledWith(
-          expect.objectContaining({ status: 'delivered' })
-        );
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ status: 'delivered' }));
       });
 
       expect(toast.success).toHaveBeenCalledWith('Order status updated to delivered');
@@ -269,13 +215,7 @@ describe('OrderStatusUpdater', () => {
     it('shows error toast when update fails', async () => {
       mockEq.mockResolvedValue({ error: new Error('Database error') });
 
-      render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="paid"
-          trackingNumber={null}
-        />
-      );
+      render(<OrderStatusUpdater orderId="order-123" currentStatus="paid" trackingNumber={null} />);
 
       fireEvent.click(screen.getByText('Start Processing'));
 
@@ -287,13 +227,7 @@ describe('OrderStatusUpdater', () => {
 
   describe('local state updates', () => {
     it('updates local status after successful API call', async () => {
-      render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="paid"
-          trackingNumber={null}
-        />
-      );
+      render(<OrderStatusUpdater orderId="order-123" currentStatus="paid" trackingNumber={null} />);
 
       // Initially shows "Start Processing"
       expect(screen.getByText('Start Processing')).toBeInTheDocument();
@@ -308,11 +242,7 @@ describe('OrderStatusUpdater', () => {
 
     it('preserves tracking number in local state after shipping', async () => {
       render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="printed"
-          trackingNumber={null}
-        />
+        <OrderStatusUpdater orderId="order-123" currentStatus="printed" trackingNumber={null} />
       );
 
       const input = screen.getByPlaceholderText('Tracking number (optional)');
@@ -335,13 +265,7 @@ describe('OrderStatusUpdater', () => {
       });
       mockEq.mockReturnValue(pendingPromise);
 
-      render(
-        <OrderStatusUpdater
-          orderId="order-123"
-          currentStatus="paid"
-          trackingNumber={null}
-        />
-      );
+      render(<OrderStatusUpdater orderId="order-123" currentStatus="paid" trackingNumber={null} />);
 
       const button = screen.getByText('Start Processing');
       fireEvent.click(button);

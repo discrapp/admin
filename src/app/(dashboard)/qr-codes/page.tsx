@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Clock, Link, QrCode, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { QrCode, CheckCircle, Clock, Link, XCircle } from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,9 +43,7 @@ export default async function QRCodesPage() {
   const supabase = await createClient();
 
   // Get all QR codes for stats
-  const { data: allQRCodes } = await supabase
-    .from('qr_codes')
-    .select('id, status');
+  const { data: allQRCodes } = await supabase.from('qr_codes').select('id, status');
 
   // Get recent QR codes with details
   const { data: recentQRCodes } = await supabase
@@ -65,9 +63,7 @@ export default async function QRCodesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">QR Code Inventory</h1>
-        <p className="text-muted-foreground">
-          Track QR code generation and assignment
-        </p>
+        <p className="text-muted-foreground">Track QR code generation and assignment</p>
       </div>
 
       {/* Stats Cards */}
@@ -147,9 +143,7 @@ export default async function QRCodesPage() {
                 {recentQRCodes.map((qr) => (
                   <TableRow key={qr.id}>
                     <TableCell>
-                      <code className="text-sm bg-muted px-2 py-1 rounded">
-                        {qr.short_code}
-                      </code>
+                      <code className="text-sm bg-muted px-2 py-1 rounded">{qr.short_code}</code>
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -162,9 +156,7 @@ export default async function QRCodesPage() {
                     </TableCell>
                     <TableCell>
                       {qr.assigned_to ? (
-                        <span className="text-sm font-mono">
-                          {qr.assigned_to.slice(0, 8)}...
-                        </span>
+                        <span className="text-sm font-mono">{qr.assigned_to.slice(0, 8)}...</span>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
@@ -176,9 +168,7 @@ export default async function QRCodesPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No QR codes found
-            </p>
+            <p className="text-muted-foreground text-center py-8">No QR codes found</p>
           )}
         </CardContent>
       </Card>

@@ -9,11 +9,5 @@ export default function CatalogError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorDisplay
-      error={error}
-      reset={reset}
-      title="Failed to load disc catalog"
-    />
-  );
+  return <ErrorDisplay error={error} reset={reset} title="Failed to load disc catalog" />;
 }

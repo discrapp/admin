@@ -1,11 +1,11 @@
 'use client';
 
+import { CheckCircle, Loader2, Play, Printer, Truck } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
-import { toast } from 'sonner';
-import { Loader2, Play, Printer, Truck, CheckCircle } from 'lucide-react';
 
 interface OrderStatusUpdaterProps {
   orderId: string;
@@ -42,10 +42,7 @@ export function OrderStatusUpdater({
         updateData.shipped_at = new Date().toISOString();
       }
 
-      const { error } = await supabase
-        .from('sticker_orders')
-        .update(updateData)
-        .eq('id', orderId);
+      const { error } = await supabase.from('sticker_orders').update(updateData).eq('id', orderId);
 
       if (error) throw error;
 
@@ -166,9 +163,7 @@ export function OrderStatusUpdater({
             />
             {index < statusFlow.length - 1 && (
               <div
-                className={`w-8 h-0.5 ${
-                  index < currentIndex ? 'bg-green-500' : 'bg-gray-300'
-                }`}
+                className={`w-8 h-0.5 ${index < currentIndex ? 'bg-green-500' : 'bg-gray-300'}`}
               />
             )}
           </div>

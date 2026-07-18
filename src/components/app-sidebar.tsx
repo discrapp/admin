@@ -1,23 +1,24 @@
 'use client';
 
+import {
+  Activity,
+  Beaker,
+  Brain,
+  CreditCard,
+  Disc,
+  LayoutDashboard,
+  Lightbulb,
+  LogOut,
+  MapPin,
+  Package,
+  Phone,
+  QrCode,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Package,
-  Users,
-  Disc,
-  MapPin,
-  Brain,
-  QrCode,
-  CreditCard,
-  Activity,
-  LogOut,
-  Lightbulb,
-  Phone,
-  Beaker,
-} from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -31,8 +32,6 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 
 interface NavItem {
   title: string;
@@ -181,11 +180,7 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="border-t p-4">
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={handleSignOut}
-        >
+        <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </Button>

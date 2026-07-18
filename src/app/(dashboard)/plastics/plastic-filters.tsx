@@ -1,6 +1,8 @@
 'use client';
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { X } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -9,8 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 
 interface PlasticFiltersProps {
   manufacturers: string[];
@@ -66,9 +66,7 @@ export function PlasticFilters({
 
       <Select
         value={currentStatus || 'all'}
-        onValueChange={(value) =>
-          updateParams('status', value === 'all' ? null : value)
-        }
+        onValueChange={(value) => updateParams('status', value === 'all' ? null : value)}
       >
         <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Status" />
@@ -83,9 +81,7 @@ export function PlasticFilters({
 
       <Select
         value={currentManufacturer || 'all'}
-        onValueChange={(value) =>
-          updateParams('manufacturer', value === 'all' ? null : value)
-        }
+        onValueChange={(value) => updateParams('manufacturer', value === 'all' ? null : value)}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Manufacturer" />

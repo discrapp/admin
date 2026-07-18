@@ -1,6 +1,8 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -8,8 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 
 interface RecoveryFiltersProps {
   currentStatus?: string;
@@ -32,10 +32,7 @@ export function RecoveryFilters({ currentStatus }: RecoveryFiltersProps) {
 
   return (
     <div className="flex gap-4 items-center">
-      <Select
-        value={currentStatus || 'all'}
-        onValueChange={updateStatus}
-      >
+      <Select value={currentStatus || 'all'} onValueChange={updateStatus}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>

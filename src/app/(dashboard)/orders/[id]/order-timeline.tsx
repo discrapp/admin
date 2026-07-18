@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Clock, CreditCard, Printer, Truck, Package } from 'lucide-react';
+import { Check, Clock, CreditCard, Package, Printer, Truck } from 'lucide-react';
 
 interface Order {
   status: string;
@@ -107,11 +107,7 @@ export function OrderTimeline({ order }: OrderTimelineProps) {
                   : 'bg-gray-100 text-gray-400 dark:bg-gray-800'
               }`}
             >
-              {item.completed ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <item.icon className="h-4 w-4" />
-              )}
+              {item.completed ? <Check className="h-4 w-4" /> : <item.icon className="h-4 w-4" />}
             </div>
             {index < timelineItems.length - 1 && (
               <div
@@ -124,22 +120,14 @@ export function OrderTimeline({ order }: OrderTimelineProps) {
             )}
           </div>
           <div className="pb-4">
-            <div
-              className={`font-medium ${
-                item.completed ? '' : 'text-muted-foreground'
-              }`}
-            >
+            <div className={`font-medium ${item.completed ? '' : 'text-muted-foreground'}`}>
               {item.label}
             </div>
             {item.date && (
-              <div className="text-sm text-muted-foreground">
-                {formatDate(item.date)}
-              </div>
+              <div className="text-sm text-muted-foreground">{formatDate(item.date)}</div>
             )}
             {item.status === 'shipped' && order.tracking_number && (
-              <div className="text-sm text-blue-600">
-                Tracking: {order.tracking_number}
-              </div>
+              <div className="text-sm text-blue-600">Tracking: {order.tracking_number}</div>
             )}
           </div>
         </div>

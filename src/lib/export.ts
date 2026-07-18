@@ -64,7 +64,10 @@ export function exportToPDF<T extends object>(
 
   // Build HTML table
   const headerRow = columns
-    .map((col) => `<th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">${col.header}</th>`)
+    .map(
+      (col) =>
+        `<th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">${col.header}</th>`
+    )
     .join('');
 
   const bodyRows = data

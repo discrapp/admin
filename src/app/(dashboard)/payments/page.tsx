@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertTriangle, CreditCard, DollarSign, TrendingUp, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DollarSign, TrendingUp, CreditCard, AlertTriangle, Users } from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +21,7 @@ function formatCurrency(cents: number) {
   }).format(cents / 100);
 }
 
-function formatDate(date: string) {
+function _formatDate(date: string) {
   return new Date(date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -103,9 +103,7 @@ export default async function PaymentsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Payment Monitoring</h1>
-        <p className="text-muted-foreground">
-          Track revenue and payment status
-        </p>
+        <p className="text-muted-foreground">Track revenue and payment status</p>
       </div>
 
       {/* Revenue Stats */}
@@ -117,9 +115,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              {paidOrders.length} paid orders
-            </p>
+            <p className="text-xs text-muted-foreground">{paidOrders.length} paid orders</p>
           </CardContent>
         </Card>
 
@@ -130,9 +126,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(todayRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              {todayOrders.length} orders
-            </p>
+            <p className="text-xs text-muted-foreground">{todayOrders.length} orders</p>
           </CardContent>
         </Card>
 
@@ -143,9 +137,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(weekRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              {weekOrders.length} orders
-            </p>
+            <p className="text-xs text-muted-foreground">{weekOrders.length} orders</p>
           </CardContent>
         </Card>
 
@@ -156,9 +148,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(monthRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              {monthOrders.length} orders
-            </p>
+            <p className="text-xs text-muted-foreground">{monthOrders.length} orders</p>
           </CardContent>
         </Card>
       </div>
@@ -172,9 +162,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingPayments.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting payment completion
-            </p>
+            <p className="text-xs text-muted-foreground">Awaiting payment completion</p>
           </CardContent>
         </Card>
 
@@ -185,9 +173,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cancelledOrders.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Cancelled orders
-            </p>
+            <p className="text-xs text-muted-foreground">Cancelled orders</p>
           </CardContent>
         </Card>
 
@@ -198,9 +184,7 @@ export default async function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{connectUsers?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Users with Connect accounts
-            </p>
+            <p className="text-xs text-muted-foreground">Users with Connect accounts</p>
           </CardContent>
         </Card>
       </div>
@@ -225,18 +209,13 @@ export default async function PaymentsPage() {
               <TableBody>
                 {recentOrders.map((order) => (
                   <TableRow key={order.id}>
-                    <TableCell className="font-medium">
-                      {order.order_number}
-                    </TableCell>
+                    <TableCell className="font-medium">{order.order_number}</TableCell>
                     <TableCell>{order.quantity} stickers</TableCell>
                     <TableCell className="font-mono">
                       {formatCurrency(order.total_price_cents)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={statusColors[order.status] || ''}
-                      >
+                      <Badge variant="secondary" className={statusColors[order.status] || ''}>
                         {order.status}
                       </Badge>
                     </TableCell>
@@ -246,9 +225,7 @@ export default async function PaymentsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-8">
-              No orders found
-            </p>
+            <p className="text-muted-foreground text-center py-8">No orders found</p>
           )}
         </CardContent>
       </Card>

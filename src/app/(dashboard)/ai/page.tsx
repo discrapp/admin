@@ -1,8 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Brain, CheckCircle, Clock, Target, TrendingUp, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -11,11 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Brain, Target, Clock, TrendingUp, CheckCircle, XCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-function formatDate(date: string) {
+function _formatDate(date: string) {
   return new Date(date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -94,12 +94,14 @@ export default async function AIInsightsPage() {
   // Calculate identification metrics
   const totalIdentifications = identificationLogs?.length || 0;
   const avgIdentificationConfidence = identificationLogs?.length
-    ? identificationLogs.reduce((sum, log) => sum + (log.ai_confidence || 0), 0) / identificationLogs.length
+    ? identificationLogs.reduce((sum, log) => sum + (log.ai_confidence || 0), 0) /
+      identificationLogs.length
     : 0;
   const correctedCount = identificationLogs?.filter((log) => log.was_corrected).length || 0;
   const correctionRate = totalIdentifications > 0 ? correctedCount / totalIdentifications : 0;
   const avgIdentificationTime = identificationLogs?.length
-    ? identificationLogs.reduce((sum, log) => sum + (log.processing_time_ms || 0), 0) / identificationLogs.length
+    ? identificationLogs.reduce((sum, log) => sum + (log.processing_time_ms || 0), 0) /
+      identificationLogs.length
     : 0;
 
   // Calculate shot recommendation metrics
@@ -112,23 +114,22 @@ export default async function AIInsightsPage() {
     : 0;
 
   // Throw type distribution
-  const throwTypes = shotLogs?.reduce(
-    (acc, log) => {
-      if (log.recommended_throw_type) {
-        acc[log.recommended_throw_type] = (acc[log.recommended_throw_type] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>
-  ) || {};
+  const throwTypes =
+    shotLogs?.reduce(
+      (acc, log) => {
+        if (log.recommended_throw_type) {
+          acc[log.recommended_throw_type] = (acc[log.recommended_throw_type] || 0) + 1;
+        }
+        return acc;
+      },
+      {} as Record<string, number>
+    ) || {};
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">AI Insights</h1>
-        <p className="text-muted-foreground">
-          Monitor AI model performance and accuracy
-        </p>
+        <p className="text-muted-foreground">Monitor AI model performance and accuracy</p>
       </div>
 
       {/* Identification Metrics */}
@@ -137,9 +138,7 @@ export default async function AIInsightsPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Identifications
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Total Identifications</CardTitle>
               <Brain className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -149,9 +148,7 @@ export default async function AIInsightsPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Avg Confidence
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Avg Confidence</CardTitle>
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -163,26 +160,18 @@ export default async function AIInsightsPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Correction Rate
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Correction Rate</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatConfidence(correctionRate)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {correctedCount} corrected
-              </p>
+              <div className="text-2xl font-bold">{formatConfidence(correctionRate)}</div>
+              <p className="text-xs text-muted-foreground">{correctedCount} corrected</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Avg Processing Time
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Avg Processing Time</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -200,9 +189,7 @@ export default async function AIInsightsPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Recommendations
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Total Recommendations</CardTitle>
               <Brain className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -212,23 +199,17 @@ export default async function AIInsightsPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Avg Confidence
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Avg Confidence</CardTitle>
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatConfidence(avgShotConfidence)}
-              </div>
+              <div className="text-2xl font-bold">{formatConfidence(avgShotConfidence)}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Throw Types
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Throw Types</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -247,9 +228,7 @@ export default async function AIInsightsPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Avg Processing Time
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Avg Processing Time</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -267,9 +246,7 @@ export default async function AIInsightsPage() {
           <TabsTrigger value="identifications">
             Identification Logs ({recentIdentifications?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="shots">
-            Shot Recommendations ({recentShots?.length || 0})
-          </TabsTrigger>
+          <TabsTrigger value="shots">Shot Recommendations ({recentShots?.length || 0})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="identifications">
@@ -318,14 +295,10 @@ export default async function AIInsightsPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          {log.was_corrected
-                            ? `${log.user_manufacturer} ${log.user_mold}`
-                            : '—'}
+                          {log.was_corrected ? `${log.user_manufacturer} ${log.user_mold}` : '—'}
                         </TableCell>
                         <TableCell>
-                          {log.processing_time_ms
-                            ? `${log.processing_time_ms}ms`
-                            : '—'}
+                          {log.processing_time_ms ? `${log.processing_time_ms}ms` : '—'}
                         </TableCell>
                         <TableCell>{formatDateTime(log.created_at)}</TableCell>
                       </TableRow>
@@ -333,9 +306,7 @@ export default async function AIInsightsPage() {
                   </TableBody>
                 </Table>
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  No identification logs yet
-                </p>
+                <p className="text-muted-foreground text-center py-8">No identification logs yet</p>
               )}
             </CardContent>
           </Card>
@@ -368,9 +339,7 @@ export default async function AIInsightsPage() {
                             : '—'}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">
-                            {log.recommended_throw_type || '—'}
-                          </Badge>
+                          <Badge variant="outline">{log.recommended_throw_type || '—'}</Badge>
                         </TableCell>
                         <TableCell>
                           {log.recommended_power_percentage
@@ -392,9 +361,7 @@ export default async function AIInsightsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {log.processing_time_ms
-                            ? `${log.processing_time_ms}ms`
-                            : '—'}
+                          {log.processing_time_ms ? `${log.processing_time_ms}ms` : '—'}
                         </TableCell>
                         <TableCell>{formatDateTime(log.created_at)}</TableCell>
                       </TableRow>

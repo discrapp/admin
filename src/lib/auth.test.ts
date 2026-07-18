@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock redirect - must be before importing auth
 const mockRedirect = vi.fn();
@@ -19,11 +19,7 @@ vi.mock('@/lib/supabase/server', () => ({
   })),
 }));
 
-import {
-  getAuthenticatedUser,
-  requireAdmin,
-  requireAdminOrPrinter,
-} from './auth';
+import { getAuthenticatedUser, requireAdmin, requireAdminOrPrinter } from './auth';
 
 describe('auth utilities', () => {
   beforeEach(() => {
@@ -188,9 +184,7 @@ describe('auth utilities', () => {
     it('redirects to /unauthorized when no user is authenticated', async () => {
       mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
 
-      await expect(requireAdminOrPrinter()).rejects.toThrow(
-        'NEXT_REDIRECT:/unauthorized'
-      );
+      await expect(requireAdminOrPrinter()).rejects.toThrow('NEXT_REDIRECT:/unauthorized');
       expect(mockRedirect).toHaveBeenCalledWith('/unauthorized');
     });
 
@@ -206,9 +200,7 @@ describe('auth utilities', () => {
         error: null,
       });
 
-      await expect(requireAdminOrPrinter()).rejects.toThrow(
-        'NEXT_REDIRECT:/unauthorized'
-      );
+      await expect(requireAdminOrPrinter()).rejects.toThrow('NEXT_REDIRECT:/unauthorized');
       expect(mockRedirect).toHaveBeenCalledWith('/unauthorized');
     });
 

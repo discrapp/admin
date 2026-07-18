@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Activity, Bell, Database, Disc, MapPin, Server, ShoppingCart, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,16 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Activity,
-  Bell,
-  Database,
-  Users,
-  Disc,
-  ShoppingCart,
-  MapPin,
-  Server,
-} from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,9 +21,7 @@ export default async function SystemPage() {
   const supabase = await createClient();
 
   // Notification health - users with push tokens
-  const { data: allUsers } = await supabase
-    .from('profiles')
-    .select('id, push_token, created_at');
+  const { data: allUsers } = await supabase.from('profiles').select('id, push_token, created_at');
 
   const totalUsers = allUsers?.length || 0;
   const usersWithPush = allUsers?.filter((u) => u.push_token).length || 0;
@@ -66,9 +55,7 @@ export default async function SystemPage() {
   // Recent user signups (last 7 days)
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
-  const recentSignups = allUsers?.filter(
-    (u) => new Date(u.created_at) >= weekAgo
-  ).length || 0;
+  const recentSignups = allUsers?.filter((u) => new Date(u.created_at) >= weekAgo).length || 0;
 
   // Database table stats
   const tableStats = [
@@ -85,9 +72,7 @@ export default async function SystemPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">System Health</h1>
-        <p className="text-muted-foreground">
-          Monitor system health and database statistics
-        </p>
+        <p className="text-muted-foreground">Monitor system health and database statistics</p>
       </div>
 
       {/* Health Overview */}
@@ -103,9 +88,7 @@ export default async function SystemPage() {
                 Operational
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              All systems running normally
-            </p>
+            <p className="text-xs text-muted-foreground mt-2">All systems running normally</p>
           </CardContent>
         </Card>
 
@@ -116,9 +99,7 @@ export default async function SystemPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              +{recentSignups} this week
-            </p>
+            <p className="text-xs text-muted-foreground">+{recentSignups} this week</p>
           </CardContent>
         </Card>
 
@@ -144,9 +125,7 @@ export default async function SystemPage() {
             <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
               Connected
             </Badge>
-            <p className="text-xs text-muted-foreground mt-2">
-              Supabase PostgreSQL
-            </p>
+            <p className="text-xs text-muted-foreground mt-2">Supabase PostgreSQL</p>
           </CardContent>
         </Card>
       </div>
@@ -171,9 +150,7 @@ export default async function SystemPage() {
             </div>
             <div className="p-4 border rounded-lg">
               <p className="text-sm text-muted-foreground">Push Disabled</p>
-              <p className="text-2xl font-bold text-yellow-600">
-                {totalUsers - usersWithPush}
-              </p>
+              <p className="text-2xl font-bold text-yellow-600">{totalUsers - usersWithPush}</p>
             </div>
           </div>
           <div className="mt-4">

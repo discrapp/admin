@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
 import { requireAdminOrPrinter } from '@/lib/auth';
-import { OrdersTable } from './orders-table';
+import { createClient } from '@/lib/supabase/server';
 import { OrderFilters } from './order-filters';
+import { OrdersTable } from './orders-table';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,9 +75,7 @@ export default async function OrdersPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Orders</h1>
-        <p className="text-muted-foreground">
-          Manage sticker orders and fulfillment
-        </p>
+        <p className="text-muted-foreground">Manage sticker orders and fulfillment</p>
       </div>
 
       <OrderFilters currentStatus={status} currentSearch={search} />

@@ -1,12 +1,21 @@
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth';
-import { notFound } from 'next/navigation';
+import {
+  ArrowLeft,
+  Bell,
+  Calendar,
+  CreditCard,
+  Disc,
+  Eye,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+} from 'lucide-react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { notFound } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -15,18 +24,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  ArrowLeft,
-  Mail,
-  Calendar,
-  CreditCard,
-  Bell,
-  Disc,
-  Package,
-  MapPin,
-  Eye,
-  Phone,
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { requireAdmin } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,35 +68,24 @@ function getInitials(name: string | null, email: string): string {
 }
 
 const statusColors: Record<string, string> = {
-  pending_payment:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  pending_payment: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
   paid: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  processing:
-    'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-  printed:
-    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+  processing: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+  printed: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
   shipped: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  delivered:
-    'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
+  delivered: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
   cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
 };
 
 const recoveryStatusColors: Record<string, string> = {
   found: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  meetup_proposed:
-    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  confirmed:
-    'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-  recovered:
-    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  meetup_proposed: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  confirmed: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+  recovered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
   cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
 };
 
-export default async function UserDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   // Server-side authorization check - admin only
   await requireAdmin();
 
@@ -104,18 +93,14 @@ export default async function UserDetailPage({
   const supabase = await createClient();
 
   // Fetch user profile
-  const { data: user, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data: user, error } = await supabase.from('profiles').select('*').eq('id', id).single();
 
   if (error || !user) {
     notFound();
   }
 
   // Fetch user's discs
-  const { data: discs, error: discsError } = await supabase
+  const { data: discs, error: _discsError } = await supabase
     .from('discs')
     .select(
       `
@@ -132,7 +117,6 @@ export default async function UserDetailPage({
     .eq('owner_id', id)
     .order('created_at', { ascending: false })
     .limit(10);
-
 
   // Fetch user's orders
   const { data: orders } = await supabase
@@ -202,12 +186,8 @@ export default async function UserDetailPage({
             </Avatar>
             <div className="flex-1 space-y-4">
               <div>
-                <h1 className="text-2xl font-bold">
-                  {user.full_name || 'No name'}
-                </h1>
-                {user.username && (
-                  <p className="text-muted-foreground">@{user.username}</p>
-                )}
+                <h1 className="text-2xl font-bold">{user.full_name || 'No name'}</h1>
+                {user.username && <p className="text-muted-foreground">@{user.username}</p>}
               </div>
 
               <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
@@ -248,9 +228,7 @@ export default async function UserDetailPage({
                       Stripe Connect Active
                     </Badge>
                   ) : (
-                    <span className="text-muted-foreground">
-                      No Stripe Connect
-                    </span>
+                    <span className="text-muted-foreground">No Stripe Connect</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -263,9 +241,7 @@ export default async function UserDetailPage({
                       Push Enabled
                     </Badge>
                   ) : (
-                    <span className="text-muted-foreground">
-                      Push Disabled
-                    </span>
+                    <span className="text-muted-foreground">Push Disabled</span>
                   )}
                 </div>
               </div>
@@ -301,12 +277,10 @@ export default async function UserDetailPage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(recoveriesAsOwner?.length || 0) +
-                (recoveriesAsFinder?.length || 0)}
+              {(recoveriesAsOwner?.length || 0) + (recoveriesAsFinder?.length || 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {recoveriesAsOwner?.length || 0} as owner,{' '}
-              {recoveriesAsFinder?.length || 0} as finder
+              {recoveriesAsOwner?.length || 0} as owner, {recoveriesAsFinder?.length || 0} as finder
             </p>
           </CardContent>
         </Card>
@@ -315,17 +289,10 @@ export default async function UserDetailPage({
       {/* Tabs for related data */}
       <Tabs defaultValue="discs" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="discs">
-            Discs ({discs?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="orders">
-            Orders ({orders?.length || 0})
-          </TabsTrigger>
+          <TabsTrigger value="discs">Discs ({discs?.length || 0})</TabsTrigger>
+          <TabsTrigger value="orders">Orders ({orders?.length || 0})</TabsTrigger>
           <TabsTrigger value="recoveries">
-            Recoveries (
-            {(recoveriesAsOwner?.length || 0) +
-              (recoveriesAsFinder?.length || 0)}
-            )
+            Recoveries ({(recoveriesAsOwner?.length || 0) + (recoveriesAsFinder?.length || 0)})
           </TabsTrigger>
         </TabsList>
 
@@ -355,9 +322,7 @@ export default async function UserDetailPage({
                         </TableCell>
                         <TableCell>{disc.color || '—'}</TableCell>
                         <TableCell>{disc.plastic || '—'}</TableCell>
-                        <TableCell>
-                          {disc.weight ? `${disc.weight}g` : '—'}
-                        </TableCell>
+                        <TableCell>{disc.weight ? `${disc.weight}g` : '—'}</TableCell>
                         <TableCell>
                           {disc.qr_code_id ? (
                             <Badge
@@ -376,9 +341,7 @@ export default async function UserDetailPage({
                   </TableBody>
                 </Table>
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  No discs registered
-                </p>
+                <p className="text-muted-foreground text-center py-8">No discs registered</p>
               )}
             </CardContent>
           </Card>
@@ -405,18 +368,11 @@ export default async function UserDetailPage({
                   <TableBody>
                     {orders.map((order) => (
                       <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          {order.order_number}
-                        </TableCell>
+                        <TableCell className="font-medium">{order.order_number}</TableCell>
                         <TableCell>{order.quantity} stickers</TableCell>
+                        <TableCell>{formatCurrency(order.total_price_cents)}</TableCell>
                         <TableCell>
-                          {formatCurrency(order.total_price_cents)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className={statusColors[order.status] || ''}
-                          >
+                          <Badge variant="secondary" className={statusColors[order.status] || ''}>
                             {order.status}
                           </Badge>
                         </TableCell>
@@ -433,9 +389,7 @@ export default async function UserDetailPage({
                   </TableBody>
                 </Table>
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  No orders found
-                </p>
+                <p className="text-muted-foreground text-center py-8">No orders found</p>
               )}
             </CardContent>
           </Card>
@@ -468,24 +422,18 @@ export default async function UserDetailPage({
                           <TableCell>
                             <Badge
                               variant="secondary"
-                              className={
-                                recoveryStatusColors[recovery.status] || ''
-                              }
+                              className={recoveryStatusColors[recovery.status] || ''}
                             >
                               {recovery.status}
                             </Badge>
                           </TableCell>
-                          <TableCell>
-                            {formatDateTime(recovery.created_at)}
-                          </TableCell>
+                          <TableCell>{formatDateTime(recovery.created_at)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
-                    No recoveries as owner
-                  </p>
+                  <p className="text-muted-foreground text-center py-8">No recoveries as owner</p>
                 )}
               </CardContent>
             </Card>
@@ -515,24 +463,18 @@ export default async function UserDetailPage({
                           <TableCell>
                             <Badge
                               variant="secondary"
-                              className={
-                                recoveryStatusColors[recovery.status] || ''
-                              }
+                              className={recoveryStatusColors[recovery.status] || ''}
                             >
                               {recovery.status}
                             </Badge>
                           </TableCell>
-                          <TableCell>
-                            {formatDateTime(recovery.created_at)}
-                          </TableCell>
+                          <TableCell>{formatDateTime(recovery.created_at)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
-                    No recoveries as finder
-                  </p>
+                  <p className="text-muted-foreground text-center py-8">No recoveries as finder</p>
                 )}
               </CardContent>
             </Card>
